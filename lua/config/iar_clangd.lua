@@ -1,0 +1,65 @@
+local M = {}
+
+local function output_text(result)
+  local parts = {}
+  if result.stdout and result.stdout ~= "" then
+    table.insert(parts, vim.trim(result.stdout))
+  end
+  if result.stderr and result.stderr ~= "" then
+    table.insert(parts, vim.trim(result.stderr))
+  end
+  return table.concat(parts, "\n")
+end
+
+function M.generate(configuration)
+  if vim.fn.has("win32") ~= 1 then
+    vim.notify("IarClangd currently supports Windows IAR projects.", vim.log.levels.ERROR)
+    return
+  end
+
+  local powershell = vim.fn.exepath("pwsh")
+  if powershell == "" then
+    powershell = vim.fn.exepath("powershell")
+  end
+
+  local script = vim.fn.stdpath("config") .. "/tools/iar-clangd.ps1"
+  if powershell == "" or vim.fn.filereadable(script) ~= 1 then
+    vim.notify("IAR clangd generator is not installed correctly.", vim.log.levels.ERROR)
+    return
+  end
+
+  local command = {
+    powershell,
+    "-NoLogo",
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    script,
+  }
+  if configuration and configuration ~= "" then
+    vim.list_extend(command, { "-Configuration", configuration })
+  end
+
+  vim.notify("正在读取 IAR 工程并生成 compile_commands.json…")
+  vim.system(command, { cwd = vim.fn.getcwd(), text = true }, function(result)
+    vim.schedule(function()
+      local message = output_text(result)
+      if result.code == 0 then
+        vim.notify(message ~= "" and message or "IAR clangd 配置已生成")
+        pcall(vim.cmd, "LspRestart")
+      else
+        vim.notify(message ~= "" and message or "IAR clangd 配置生成失败", vim.log.levels.ERROR)
+      end
+    end)
+  end)
+end
+
+vim.api.nvim_create_user_command("IarClangd", function(options)
+  M.generate(options.args)
+end, {
+  nargs = "?",
+  desc = "从当前目录中的 IAR .ewp 工程生成 clangd 配置",
+})
+
+return M

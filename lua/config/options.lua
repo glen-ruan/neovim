@@ -1,0 +1,84 @@
+-- Options are automatically loaded before lazy.nvim startup
+-- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
+-- Add any additional options here
+
+vim.opt.number = true
+vim.opt.relativenumber = false
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.smartindent = true
+vim.opt.termguicolors = true
+vim.opt.swapfile = false
+vim.opt.mouse = "a"
+vim.opt.laststatus = 3
+vim.opt.clipboard = "unnamedplus"
+
+-- 禁止自动注释续行
+vim.opt.formatoptions:remove({ "c", "r", "o" })
+
+vim.opt.cursorline = true -- 开启光标行高亮（可以只高亮行号）
+-- vim.opt.cursorlineopt = "number" -- 只高亮行号，而不是整行
+
+-- 全局 LSP 诊断配置
+vim.diagnostic.config({
+  signs = true,
+  underline = true,
+  virtual_text = false, -- 由 tiny-inline-diagnostic 负责行内提示
+  update_in_insert = false,
+})
+
+-- 创建 :H 命令，在新 tab 中打开帮助
+vim.api.nvim_create_user_command("Hv", function(opts)
+  vim.cmd("vertical help " .. (opts.args ~= "" and opts.args or ""))
+end, { nargs = "*", complete = "help" })
+
+vim.o.modeline = false
+
+-- 添加 '-' 词语
+vim.opt.iskeyword:append("-")
+
+-- 使得左右键可以跨行
+vim.o.whichwrap = vim.o.whichwrap .. "<>,h,l"
+
+-- Windows: 让普通 PowerShell 启动的 Neovim 也能找到插件依赖的工具。
+if vim.fn.has("win32") == 1 then
+  local data = vim.fn.stdpath("data")
+  local paths = {
+    data .. "/mason/bin",
+    data .. "/tools/bin",
+    data .. "/tools/w64devkit/bin",
+    "C:/Program Files/Git/mingw64/bin",
+  }
+
+  for i = #paths, 1, -1 do
+    if vim.fn.isdirectory(paths[i]) == 1 then
+      vim.env.PATH = paths[i] .. ";" .. vim.env.PATH
+    end
+  end
+
+  local gcc = data .. "/tools/w64devkit/bin/gcc.exe"
+  if vim.fn.executable(gcc) == 1 then
+    vim.env.CC = gcc
+  end
+
+  -- 保证 :!、插件构建和终端命令使用正确的 PowerShell 参数与 UTF-8 输出。
+  local powershell = vim.fn.exepath("pwsh")
+  if powershell == "" then
+    powershell = vim.fn.exepath("powershell")
+  end
+  if powershell ~= "" then
+    vim.opt.shell = powershell
+    vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+    vim.opt.shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait"
+    vim.opt.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+    vim.opt.shellquote = ""
+    vim.opt.shellxquote = ""
+  end
+end
+
+-- 禁止加载 netrw 核心
+-- vim.g.loaded_netrw = 1
+--
+-- -- 禁止加载 netrw 的 plugin 层
+-- vim.g.loaded_netrwPlugin = 1

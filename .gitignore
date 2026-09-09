@@ -1,0 +1,23 @@
+# Neovim temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Local test and generated directories
+.tests/
+.repro/
+debug/
+data/
+doc/tags
+tt.*
+foo.*
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Keep lazy-lock.json under version control so plugin versions stay reproducible.
