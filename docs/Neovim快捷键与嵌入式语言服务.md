@@ -287,6 +287,54 @@ nvim .
 [Environment]::SetEnvironmentVariable("IARBUILD", "C:\path\to\common\bin\IarBuild.exe", "User")
 ```
 
+### 12.3 在 Neovim 中编译与烧录
+
+从工程根目录执行 `nvim .` 后，按 `空格 f t` 打开浮动 PowerShell。再次按 `空格 f t` 会隐藏终端，正在运行的任务会继续。也可以用 `:terminal` 打开普通终端 Buffer；简单的一次性命令可以写成 `:!命令`。
+
+先用 `Get-Location` 确认终端位于 SDK 根目录。当前 Template 工程的增量编译命令是：
+
+```powershell
+& "D:\privateSoftware\keil5\core\UV4\UV4.exe" -j0 -b ".\Project\0_Examples\Template\MDK-ARM\Project.uvprojx" -t "FWLib" -o ".\keil-build.log"
+Get-Content ".\keil-build.log"
+```
+
+其他常用 Keil 命令：
+
+```powershell
+# 重新翻译并链接当前 Target
+& "D:\privateSoftware\keil5\core\UV4\UV4.exe" -j0 -r ".\Project\0_Examples\Template\MDK-ARM\Project.uvprojx" -t "FWLib" -o ".\keil-rebuild.log"
+
+# 清理所有 Target
+& "D:\privateSoftware\keil5\core\UV4\UV4.exe" -j0 -c ".\Project\0_Examples\Template\MDK-ARM\Project.uvprojx"
+
+# 清理后重新翻译当前 Target
+& "D:\privateSoftware\keil5\core\UV4\UV4.exe" -j0 -cr ".\Project\0_Examples\Template\MDK-ARM\Project.uvprojx" -t "FWLib" -o ".\keil-clean-rebuild.log"
+```
+
+连接调试器和目标板后烧录：
+
+```powershell
+& "D:\privateSoftware\keil5\core\UV4\UV4.exe" -j0 -f ".\Project\0_Examples\Template\MDK-ARM\Project.uvprojx" -t "FWLib" -o ".\keil-flash.log"
+Get-Content ".\keil-flash.log"
+```
+
+`-f` 使用 `.uvprojx` 中 **Options for Target → Utilities** 已保存的调试器、Flash Algorithm 和下载设置。第一次命令行烧录前，应先在 µVision 中成功完成一次手动 Flash Download。µVision 构建退出码为：`0` 无错误和警告、`1` 只有警告、`2` 编译错误、`3` 严重错误。
+
+IAR 工程在浮动终端中编译：
+
+```powershell
+# 增量构建 Debug Configuration
+& "D:\workSoftware\iar\common\bin\IarBuild.exe" ".\你的工程.ewp" -make "Debug" -log all
+
+# 完整重新构建 Debug Configuration
+& "D:\workSoftware\iar\common\bin\IarBuild.exe" ".\你的工程.ewp" -build "Debug" -log all
+
+# 清理 Debug Configuration
+& "D:\workSoftware\iar\common\bin\IarBuild.exe" ".\你的工程.ewp" -clean "Debug" -log all
+```
+
+`IarBuild.exe` 只负责构建。IAR 烧录需要按工程配置 C-SPY 命令行流程，或者调用芯片厂商提供的烧录工具；具体命令取决于调试器、芯片和 `.ddf`/`.mac` 配置，不能只由 `.ewp` 推导出一条通用烧录命令。
+
 ## 13. 当前主要插件
 
 | 类别 | 插件 | 用途 |

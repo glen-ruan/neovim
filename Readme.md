@@ -105,4 +105,4 @@ git clone <你的仓库地址> "$env:LOCALAPPDATA\nvim"
 nvim
 ```
 
-首次启动后运行 `:Lazy sync`，再用 `:Mason` 检查语言服务器和外部工具。需要提前安装 Git、Node.js、Python，以及可供 Treesitter 编译 parser 的 C 编译器。嵌入式工程还需要对应的 IAR 或 Keil 工具链；可以把 `IarBuild.exe`、`UV4.exe` 加入 PATH，或分别设置 `IARBUILD_EXE`、`UV4_EXE` 环境变量。
+首次启动后运行 `:Lazy sync`，再用 `:Mason` 检查语言服务器和外部工具。需要提前安装 Git、Node.js、Python，以及可供 Treesitter 编译 parser 的 C 编译器。嵌入式工程还需要对应的 IAR 或 Keil 工具链；可以把 `IarBuild.exe`、`UV4.exe` 加入 PATH，或分别设置 `IARBUILD`、`UV4_EXE` 环境变量。
