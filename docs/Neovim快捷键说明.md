@@ -200,9 +200,21 @@ Python LSP 和调试器当前只使用工程目录（或其父目录）中的 `.
 |---|---|
 | 查看 Git 状态 | `空格 g s` |
 | 查看修改片段 | `空格 g d` |
+| 打开 Diffview 查看当前改动 | `空格 g v` |
+| 关闭 Diffview | `空格 g q` |
+| 查看当前文件的提交历史 | `空格 g f` |
+| 查看整个仓库的文件历史 | `空格 g l` |
 | 查看仓库提交记录 | `:lua Snacks.picker.git_log()` |
 | 查看当前文件历史 | `:lua Snacks.picker.git_log_file()` |
 | 查看当前行历史 | `:lua Snacks.picker.git_log_line()` |
+
+对比任意两个提交或标签：
+
+```vim
+:DiffviewOpen 旧版本..新版本
+```
+
+例如 `:DiffviewOpen v1.0.1..v1.0.3`。打开后左侧显示发生变化的文件，右侧并排显示两个版本；使用 `:DiffviewClose` 或 `空格 g q` 关闭。
 
 `gitsigns.nvim` 会在行号旁显示新增、修改和删除标记。提交、推送和分支操作可以在 `空格 f t` 打开的 PowerShell 中执行。
 
