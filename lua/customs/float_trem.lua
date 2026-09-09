@@ -68,21 +68,25 @@ function M.open()
     border = "rounded",
   })
 
-  -- Windows 优先使用 PowerShell，与 :! 命令保持一致。
-  local shell = "zsh"
+  -- Follow the user's login shell on Unix; prefer PowerShell on Windows.
+  local candidates
   if vim.fn.has("win32") == 1 then
-    local candidates = { "pwsh", "powershell", vim.env.SHELL, "bash", "cmd" }
-    shell = nil
-    for _, c in ipairs(candidates) do
-      if c and c ~= "" and vim.fn.executable(c) == 1 then
-        shell = c
-        break
-      end
-    end
-    shell = shell or "cmd"
+    candidates = { "pwsh", "powershell", vim.env.SHELL, vim.o.shell, "bash", "cmd" }
+  else
+    candidates = { vim.env.SHELL, vim.o.shell, "zsh", "bash", "sh" }
   end
+
+  local shell
+  for _, candidate in ipairs(candidates) do
+    if candidate and candidate ~= "" and vim.fn.executable(candidate) == 1 then
+      shell = vim.fn.exepath(candidate)
+      break
+    end
+  end
+  shell = shell or (vim.fn.has("win32") == 1 and "cmd" or "sh")
   local args = { shell }
-  if shell == "zsh" or shell == "bash" then
+  local shell_name = vim.fs.basename(shell):lower()
+  if shell_name == "zsh" or shell_name == "bash" then
     table.insert(args, "-i")
   end
   M.term_chan = vim.fn.termopen(args, { detach = 0 })

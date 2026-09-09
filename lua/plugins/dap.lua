@@ -9,7 +9,8 @@ return {
     config = function()
       local dap = require("dap")
       local ui = require("dapui")
-      local adapter = vim.fn.stdpath("data") .. "/tools/debugpy/Scripts/python.exe"
+      local debugpy_root = vim.fn.stdpath("data") .. "/tools/debugpy"
+      local adapter = debugpy_root .. (vim.fn.has("win32") == 1 and "/Scripts/python.exe" or "/bin/python")
 
       if vim.fn.executable(adapter) ~= 1 then
         vim.notify("未找到 debugpy，请检查 " .. adapter, vim.log.levels.ERROR)
@@ -19,23 +20,25 @@ return {
       require("dap-python").setup(adapter, { include_configs = false })
 
       -- Windows 下改用本地 TCP，避免退出调试时出现 stdio/SIGINT 警告。
-      local python_adapter = dap.adapters.python
-      dap.adapters.python = function(callback, config)
-        python_adapter(function(resolved)
-          if resolved.type == "executable" then
-            resolved.executable = {
-              command = resolved.command,
-              args = { "-m", "debugpy.adapter", "--host", "127.0.0.1", "--port", "${port}" },
-              detached = false,
-            }
-            resolved.type = "server"
-            resolved.host = "127.0.0.1"
-            resolved.port = "${port}"
-            resolved.command = nil
-            resolved.args = nil
-          end
-          callback(resolved)
-        end, config)
+      if vim.fn.has("win32") == 1 then
+        local python_adapter = dap.adapters.python
+        dap.adapters.python = function(callback, config)
+          python_adapter(function(resolved)
+            if resolved.type == "executable" then
+              resolved.executable = {
+                command = resolved.command,
+                args = { "-m", "debugpy.adapter", "--host", "127.0.0.1", "--port", "${port}" },
+                detached = false,
+              }
+              resolved.type = "server"
+              resolved.host = "127.0.0.1"
+              resolved.port = "${port}"
+              resolved.command = nil
+              resolved.args = nil
+            end
+            callback(resolved)
+          end, config)
+        end
       end
 
       local function python()
@@ -45,7 +48,9 @@ return {
 
         for _, prefix in ipairs({ vim.env.VIRTUAL_ENV or "", vim.env.CONDA_PREFIX or "" }) do
           if prefix ~= "" then
-            for _, suffix in ipairs({ "/Scripts/python.exe", "/python.exe" }) do
+            local suffixes = vim.fn.has("win32") == 1 and { "/Scripts/python.exe", "/python.exe" }
+              or { "/bin/python", "/bin/python3" }
+            for _, suffix in ipairs(suffixes) do
               if vim.fn.executable(prefix .. suffix) == 1 then
                 return prefix .. suffix
               end
@@ -56,9 +61,13 @@ return {
         local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
         while dir and dir ~= "" do
           for _, name in ipairs({ ".venv", "venv", ".env", "env" }) do
-            local candidate = dir .. "/" .. name .. "/Scripts/python.exe"
-            if vim.fn.executable(candidate) == 1 then
-              return candidate
+            local suffixes = vim.fn.has("win32") == 1 and { "/Scripts/python.exe", "/python.exe" }
+              or { "/bin/python", "/bin/python3" }
+            for _, suffix in ipairs(suffixes) do
+              local candidate = dir .. "/" .. name .. suffix
+              if vim.fn.executable(candidate) == 1 then
+                return candidate
+              end
             end
           end
           local parent = vim.fs.dirname(dir)
@@ -68,7 +77,8 @@ return {
           dir = parent
         end
 
-        return vim.fn.exepath("python")
+        local system_python = vim.fn.exepath("python3")
+        return system_python ~= "" and system_python or vim.fn.exepath("python")
       end
 
       require("dap-python").resolve_python = python
