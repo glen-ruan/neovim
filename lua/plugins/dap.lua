@@ -11,6 +11,34 @@ return {
       local ui = require("dapui")
       local platform = require("config.platform")
       local adapter = platform.debugpy_python()
+      local layout_before_debug
+
+      local function save_layout()
+        if layout_before_debug then
+          return
+        end
+        layout_before_debug = {
+          restore = vim.fn.winrestcmd(),
+          win = vim.api.nvim_get_current_win(),
+        }
+      end
+
+      local function restore_layout()
+        local layout = layout_before_debug
+        layout_before_debug = nil
+        ui.close()
+        if not layout then
+          return
+        end
+        vim.schedule(function()
+          if layout.restore ~= "" then
+            pcall(vim.cmd, layout.restore)
+          end
+          if vim.api.nvim_win_is_valid(layout.win) then
+            vim.api.nvim_set_current_win(layout.win)
+          end
+        end)
+      end
 
       if adapter then
         require("dap-python").setup(adapter, { include_configs = false })
@@ -79,6 +107,7 @@ return {
       })
 
       dap.listeners.after.event_initialized["user_dapui"] = function()
+        save_layout()
         ui.open()
       end
 
@@ -93,6 +122,7 @@ return {
         end
         if not dap.session() then
           vim.cmd("update")
+          save_layout()
         end
         dap.continue()
       end, { desc = "调试：启动/继续" })
@@ -102,7 +132,7 @@ return {
       map("n", "<S-F11>", dap.step_out, { desc = "调试：跳出" })
       map("n", "<F6>", function()
         dap.terminate()
-        ui.close()
+        restore_layout()
       end, { desc = "调试：停止" })
       map("n", "<leader>du", ui.toggle, { desc = "调试：切换面板" })
       map({ "n", "v" }, "<leader>de", ui.eval, { desc = "调试：查看表达式" })

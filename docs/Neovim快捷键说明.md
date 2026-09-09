@@ -168,9 +168,9 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 | 查看表达式 | `空格 d e` |
 | 条件断点 | `空格 d b` |
 
-Python 的标准输出和错误信息显示在底部 DAP REPL 中。程序正常结束后调试面板会保留，查看完输出后按 `F6` 关闭；也可以用 `空格 d u` 隐藏或重新打开面板。
+Python 的标准输出和错误信息显示在底部 DAP REPL 中。程序正常结束后调试面板会保留，查看完输出后按 `F6` 关闭；此时会恢复按 `F5` 前的分屏比例和激活窗口。也可以用 `空格 d u` 隐藏或重新打开面板。
 
-调试器依次寻找当前虚拟环境、工程中的 `.venv`/`venv`/`.env`/`env`，最后使用 PATH 中的 Python。
+Python LSP 和调试器当前只使用工程目录（或其父目录）中的 `.venv`。全局 Python、Conda、`venv`、`.env` 和 `env` 的自动回退已暂时禁用，避免全局安装的包掩盖当前工程缺少的依赖。已有 `pyproject.toml` 的 uv 工程用 `uv add 包名` 安装依赖；只有 `.venv` 的简单工程可用 `uv pip install --python .venv 包名`。
 
 手动指定解释器：
 

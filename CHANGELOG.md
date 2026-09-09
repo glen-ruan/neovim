@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3 - 2026-09-09
+
+- Restore the pre-debug split sizes and focused window when `F6` closes DAP.
+- Bind Pyright and Python debugging to the nearest project `.venv` without falling back to global packages.
+- Report missing Python imports as errors and refresh Pyright after selecting the project interpreter.
+- Load tiny-inline-diagnostic before LSP attachment and keep diagnostics visible across mode changes.
+
 ## 1.0.2 - 2026-09-09
 
 - Keep Python stdout and stderr in the DAP REPL after short programs finish.

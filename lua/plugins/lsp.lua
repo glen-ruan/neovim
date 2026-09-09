@@ -11,6 +11,7 @@ return {
     },
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()
+      local platform = require("config.platform")
 
       local servers = {
         clangd = {
@@ -26,7 +27,32 @@ return {
         },
         pyright = {
           cmd = { "pyright-langserver", "--stdio" },
-          root_markers = { "pyproject.toml", "setup.py", "requirements.txt", ".git" },
+          root_markers = { "uv.lock", "pyproject.toml", ".venv", "setup.py", "requirements.txt", ".git" },
+          settings = {
+            python = {
+              analysis = {
+                diagnosticSeverityOverrides = {
+                  reportMissingImports = "error",
+                  reportMissingModuleSource = "error",
+                },
+              },
+            },
+          },
+          on_init = function(client)
+            local python = platform.project_python(client.root_dir)
+            if python then
+              local settings = {
+                python = { pythonPath = python },
+              }
+              client.settings = vim.tbl_deep_extend("force", client.settings or {}, settings)
+              client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, settings)
+              client:notify("workspace/didChangeConfiguration", { settings = nil })
+            else
+              vim.schedule(function()
+                vim.notify("当前工程没有可用的 .venv，Pyright 未绑定 Python 环境", vim.log.levels.WARN)
+              end)
+            end
+          end,
         },
         lua_ls = {
           cmd = { "lua-language-server" },
