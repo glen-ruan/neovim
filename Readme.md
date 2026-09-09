@@ -2,6 +2,8 @@
 
 本配置用于 Windows 上的 Neovim 0.12.5，插件由 `lazy.nvim` 管理。实际配置目录为：
 
+完整操作手册：[Neovim 快捷键与嵌入式语言服务](docs/Neovim快捷键与嵌入式语言服务.md)。其中包含文件管理、Buffer、分屏、终端、LSP、补全、Python 调试、QMD，以及 IAR/Keil 工程的语言服务流程。
+
 ```text
 C:\Users\ruan\AppData\Local\nvim
 ```
