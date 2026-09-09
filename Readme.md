@@ -1,108 +1,91 @@
-# Neovim 配置说明
+# Neovim 配置
 
-本配置用于 Windows 上的 Neovim 0.12.5，插件由 `lazy.nvim` 管理。实际配置目录为：
+这是 `glen-ruan` 的 Windows Neovim 配置仓库，面向 Neovim 0.12.5，使用 `lazy.nvim` 管理插件。
 
-完整操作手册：[Neovim 快捷键与嵌入式语言服务](docs/Neovim快捷键与嵌入式语言服务.md)。其中包含文件管理、Buffer、分屏、终端、LSP、补全、Python 调试、QMD，以及 IAR/Keil 工程的语言服务流程。
+## 文档
+
+- [快捷键说明](docs/Neovim快捷键说明.md)
+- [嵌入式开发流程](docs/嵌入式开发流程.md)
+
+## 仓库内容
 
 ```text
-C:\Users\ruan\AppData\Local\nvim
+init.lua                         配置入口
+lua/config/options.lua           编辑器选项、PATH 和 PowerShell
+lua/config/keymaps.lua           全局快捷键
+lua/config/autocmds.lua          自动命令
+lua/config/lazy.lua              lazy.nvim 引导和插件导入
+lua/config/iar_clangd.lua        IAR 语言服务命令
+lua/config/keil_clangd.lua       Keil 语言服务命令
+lua/plugins/*.lua                插件配置
+lua/customs/float_trem.lua       浮动终端
+tools/iar-clangd.ps1             IAR 编译数据库生成器
+tools/keil-clangd.ps1            Keil 编译数据库生成器
+tools/clangd-compat/include      嵌入式 clangd 兼容头文件
+docs                             使用文档
+lazy-lock.json                   插件版本锁定文件
+stylua.toml                      Lua 格式化配置
 ```
 
-插件、解析器和 Mason 工具保存在：
+插件安装目录、Mason 工具、Treesitter parser、日志和缓存位于 `%LOCALAPPDATA%\nvim-data`，不属于本仓库。
 
-```text
-C:\Users\ruan\AppData\Local\nvim-data
+## 主要组件
+
+- `nvim-treesitter`：语法树和高亮
+- `nvim-lspconfig`、`mason.nvim`：语言服务器
+- `blink.cmp`、`LuaSnip`：补全和代码片段
+- `snacks.nvim`：文件、文本、Buffer、Git 和 LSP 搜索
+- `neo-tree.nvim`、`bufferline.nvim`：文件树和 Buffer 栏
+- `nvim-dap`、`debugpy`：Python 调试
+- `conform.nvim`：代码格式化
+- `quarto-nvim`、`otter.nvim`：QMD 支持
+- `gitsigns.nvim`：Git 修改标记
+
+## 环境要求
+
+- Neovim 0.12.5
+- Git
+- Node.js 和 Python
+- 可供 Treesitter 编译 parser 的 C 编译器
+- 按实际工程安装 IAR 或 Keil 工具链
+
+工具链不在常规路径时，可以将可执行文件加入 PATH，或设置用户环境变量 `IARBUILD`、`UV4_EXE`。
+
+## Windows 安装
+
+如果 `%LOCALAPPDATA%\nvim` 已存在，先将它重命名为备份目录，然后执行：
+
+```powershell
+git clone https://github.com/glen-ruan/neovim.git "$env:LOCALAPPDATA\nvim"
+nvim
 ```
 
-## 目录结构
+首次启动后执行：
 
-- `init.lua`：配置入口
-- `lua/config/options.lua`：编辑器选项、Windows PATH 和 PowerShell 设置
-- `lua/config/keymaps.lua`：全局快捷键
-- `lua/config/autocmds.lua`：自动命令
-- `lua/config/lazy.lua`：插件导入
-- `lua/plugins/*.lua`：各插件配置
-- `lua/customs/float_trem.lua`：可复用的浮动终端
+```vim
+:Lazy sync
+:Mason
+:TSInstallConfigured
+:checkhealth
+```
 
-## 主要插件
+`lazy-lock.json` 已纳入版本控制，`:Lazy sync` 会按照仓库锁定的版本恢复插件。
 
-- `nvim-treesitter`：Python、C/C++、QMD/Markdown、Lua、Web 等语法高亮
-- `nvim-lspconfig` + `mason.nvim`：语言服务器
-- `blink.cmp` + `LuaSnip`：补全和代码片段
-- `snacks.nvim`：文件、文本、缓冲区和符号搜索
-- `neo-tree.nvim`：左侧文件树
-- `bufferline.nvim`：顶部文件列表
-- `nvim-dap` + `debugpy`：Python 调试
-- `conform.nvim`：手动格式化
-- `quarto-nvim` + `otter.nvim`：QMD 支持
-- `aerial.nvim`：代码结构大纲
-- `trouble.nvim`、`tiny-inline-diagnostic.nvim`：诊断显示
-- `markdown-preview.nvim`：Markdown 浏览器预览
+## 更新和保存配置
 
-## 常用快捷键
+获取远程更新：
 
-`<leader>` 是空格。
+```powershell
+cd "$env:LOCALAPPDATA\nvim"
+git pull
+```
 
-| 功能 | 快捷键 |
-| --- | --- |
-| 保存文件 | `<Space>w` |
-| 关闭当前文件 | `<Space>bd` |
-| 打开/关闭文件树 | `<Space>e` |
-| 查找文件 | `<Space>ff` |
-| 搜索项目文字 | `<Space>fg` |
-| 切换已打开文件 | `<Space>fb` |
-| 最近文件 | `<Space>fr` |
-| 上一个/下一个文件 | `<Space><PageUp>` / `<Space><PageDown>` |
-| 跳到第 1～9 个文件 | `<Space>1` ～ `<Space>9` |
-| 垂直/水平分屏 | `<Space>sv` / `<Space>sh` |
-| 平均分配分屏 | `<Space>se` |
-| 关闭当前分屏 | `<Space>sx` |
-| 切换分屏 | `<Space>` + 方向键 |
-| 打开/关闭浮动终端 | `<Space>ft` |
-| 终端回普通模式 | `Esc` |
-| 从终端切换窗口 | `Ctrl+w` 后接方向键 |
-| 诊断列表 | `<Space>xx` |
-| 代码结构 | `<Space>o` |
-| 重命名符号 | `<Space>rn` |
-| 格式化当前文件 | `<Space>cf` |
-| QMD 预览/关闭预览 | `<Space>qp` / `<Space>qc` |
-
-Python 调试：`F5` 启动或继续，`F9` 切换断点，`F10` 单步跳过，`F11` 单步进入，`Shift+F11` 跳出，`F6` 停止，`<Space>du` 切换调试面板。
-
-## 管理和检查
-
-- `:Lazy`：管理插件
-- `:Mason`：管理语言服务器和外部工具
-- `:checkhealth`：检查运行状态
-- `:TSInstallConfigured`：重新安装本配置使用的 Treesitter 解析器
-- `:ConformInfo`：检查格式化工具
-- `:LspInfo`：查看当前文件的语言服务器
-
-## Git 管理与新机器恢复
-
-仓库跟踪 `lazy-lock.json`，因此 `:Lazy sync` 会尽量恢复相同的插件版本。`nvim-data` 不属于仓库；它保存下载的插件、Mason 工具、Treesitter parser、日志和缓存，应该由 Neovim 在每台机器上重新生成。
-
-在当前机器查看改动并保存一个版本：
+保存本地修改：
 
 ```powershell
 cd "$env:LOCALAPPDATA\nvim"
 git status
 git add .
 git commit -m "描述本次 Neovim 配置修改"
+git push
 ```
-
-绑定远程仓库后首次上传：
-
-```powershell
-git remote add origin <你的仓库地址>
-git push -u origin main
-```
-
-在另一台 Windows 机器恢复：
-
-```powershell
-git clone <你的仓库地址> "$env:LOCALAPPDATA\nvim"
-nvim
-```
-
-首次启动后运行 `:Lazy sync`，再用 `:Mason` 检查语言服务器和外部工具。需要提前安装 Git、Node.js、Python，以及可供 Treesitter 编译 parser 的 C 编译器。嵌入式工程还需要对应的 IAR 或 Keil 工具链；可以把 `IarBuild.exe`、`UV4.exe` 加入 PATH，或分别设置 `IARBUILD`、`UV4_EXE` 环境变量。
