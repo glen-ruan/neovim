@@ -37,27 +37,29 @@ end
 
 function M.prepend_path(paths)
   local current = vim.env.PATH or ""
+  local result = {}
   local present = {}
-  for entry in current:gmatch("[^" .. M.path_separator .. "]+") do
-    local normalized = vim.fs.normalize(entry)
-    present[M.is_windows and normalized:lower() or normalized] = true
-  end
-
-  local additions = {}
   for _, path in ipairs(paths) do
     if path and path ~= "" and vim.fn.isdirectory(path) == 1 then
       local normalized = vim.fs.normalize(path)
       local key = M.is_windows and normalized:lower() or normalized
       if not present[key] then
-        table.insert(additions, normalized)
+        table.insert(result, normalized)
         present[key] = true
       end
     end
   end
 
-  if #additions > 0 then
-    vim.env.PATH = table.concat(additions, M.path_separator) .. M.path_separator .. current
+  for entry in current:gmatch("[^" .. M.path_separator .. "]+") do
+    local normalized = vim.fs.normalize(entry)
+    local key = M.is_windows and normalized:lower() or normalized
+    if not present[key] then
+      table.insert(result, normalized)
+      present[key] = true
+    end
   end
+
+  vim.env.PATH = table.concat(result, M.path_separator)
 end
 
 function M.project_python(start_path)

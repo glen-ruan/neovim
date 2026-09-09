@@ -6,5 +6,5 @@ if ! command -v uv >/dev/null 2>&1; then
   exit 1
 fi
 
-uv tool install --python 3.13 --force cmake-language-server
+uv tool install --python 3.13 --force --with 'pygls==1.3.1' cmake-language-server
 echo "cmake-language-server installed with an isolated Python 3.13 runtime"
