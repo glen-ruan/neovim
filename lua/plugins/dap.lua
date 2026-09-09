@@ -77,8 +77,10 @@ return {
           dir = parent
         end
 
-        local system_python = vim.fn.exepath("python3")
-        return system_python ~= "" and system_python or vim.fn.exepath("python")
+        local preferred = vim.fn.has("win32") == 1 and "python" or "python3"
+        local fallback = vim.fn.has("win32") == 1 and "python3" or "python"
+        local system_python = vim.fn.exepath(preferred)
+        return system_python ~= "" and system_python or vim.fn.exepath(fallback)
       end
 
       require("dap-python").resolve_python = python

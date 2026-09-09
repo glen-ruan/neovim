@@ -69,11 +69,18 @@ function M.open()
   })
 
   -- Follow the user's login shell on Unix; prefer PowerShell on Windows.
-  local candidates
+  local candidates = {}
   if vim.fn.has("win32") == 1 then
-    candidates = { "pwsh", "powershell", vim.env.SHELL, vim.o.shell, "bash", "cmd" }
+    vim.list_extend(candidates, { "pwsh", "powershell" })
+    if vim.env.SHELL and vim.env.SHELL ~= "" then
+      table.insert(candidates, vim.env.SHELL)
+    end
+    vim.list_extend(candidates, { vim.o.shell, "bash", "cmd" })
   else
-    candidates = { vim.env.SHELL, vim.o.shell, "zsh", "bash", "sh" }
+    if vim.env.SHELL and vim.env.SHELL ~= "" then
+      table.insert(candidates, vim.env.SHELL)
+    end
+    vim.list_extend(candidates, { vim.o.shell, "zsh", "bash", "sh" })
   end
 
   local shell
