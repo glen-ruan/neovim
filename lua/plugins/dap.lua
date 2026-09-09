@@ -54,7 +54,8 @@ return {
           program = "${file}",
           cwd = "${workspaceFolder}",
           pythonPath = python,
-          console = "integratedTerminal",
+          -- 把 stdout/stderr 写入 DAP REPL，程序结束后仍可查看。
+          console = "internalConsole",
           justMyCode = true,
         },
       }
@@ -79,12 +80,6 @@ return {
 
       dap.listeners.after.event_initialized["user_dapui"] = function()
         ui.open()
-      end
-      dap.listeners.before.event_terminated["user_dapui"] = function()
-        ui.close()
-      end
-      dap.listeners.before.event_exited["user_dapui"] = function()
-        ui.close()
       end
 
       vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError" })
