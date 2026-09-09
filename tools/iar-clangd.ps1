@@ -106,7 +106,6 @@ function Resolve-IarBuildPath {
     }
 
     $knownLocations = @(
-        'D:\workSoftware\iar\common\bin\IarBuild.exe',
         'C:\Program Files\IAR Systems\Embedded Workbench\common\bin\IarBuild.exe',
         'C:\Program Files (x86)\IAR Systems\Embedded Workbench\common\bin\IarBuild.exe'
     )

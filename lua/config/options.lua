@@ -1,7 +1,3 @@
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
-
 vim.opt.number = true
 vim.opt.relativenumber = false
 vim.opt.expandtab = true
@@ -41,33 +37,31 @@ vim.opt.iskeyword:append("-")
 -- 使得左右键可以跨行
 vim.o.whichwrap = vim.o.whichwrap .. "<>,h,l"
 
--- Windows: 让普通 PowerShell 启动的 Neovim 也能找到插件依赖的工具。
-if vim.fn.has("win32") == 1 then
-  local data = vim.fn.stdpath("data")
-  local paths = {
-    data .. "/mason/bin",
-    data .. "/tools/bin",
-    data .. "/tools/w64devkit/bin",
-    "C:/Program Files/Git/mingw64/bin",
-  }
+-- Make tools installed below Neovim's data directory visible on every platform.
+local platform = require("config.platform")
+local data = vim.fn.stdpath("data")
+local tool_paths = {
+  vim.fs.joinpath(data, "mason", "bin"),
+  vim.fs.joinpath(data, "tools", "bin"),
+  vim.fs.joinpath(vim.fn.expand("~"), ".local", "bin"),
+}
+if vim.env.UV_TOOL_BIN_DIR and vim.env.UV_TOOL_BIN_DIR ~= "" then
+  table.insert(tool_paths, vim.env.UV_TOOL_BIN_DIR)
+end
+if platform.is_windows then
+  table.insert(tool_paths, vim.fs.joinpath(data, "tools", "w64devkit", "bin"))
+end
+platform.prepend_path(tool_paths)
 
-  for i = #paths, 1, -1 do
-    if vim.fn.isdirectory(paths[i]) == 1 then
-      vim.env.PATH = paths[i] .. ";" .. vim.env.PATH
-    end
-  end
-
-  local gcc = data .. "/tools/w64devkit/bin/gcc.exe"
+if platform.is_windows then
+  local gcc = vim.fs.joinpath(data, "tools", "w64devkit", "bin", "gcc.exe")
   if vim.fn.executable(gcc) == 1 then
     vim.env.CC = gcc
   end
 
   -- 保证 :!、插件构建和终端命令使用正确的 PowerShell 参数与 UTF-8 输出。
-  local powershell = vim.fn.exepath("pwsh")
-  if powershell == "" then
-    powershell = vim.fn.exepath("powershell")
-  end
-  if powershell ~= "" then
+  local powershell = platform.find_executable("powershell", "NVIM_POWERSHELL", { "pwsh", "powershell" })
+  if powershell then
     vim.opt.shell = powershell
     vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
     vim.opt.shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait"

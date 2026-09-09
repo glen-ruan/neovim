@@ -1,9 +1,10 @@
 # Neovim 快捷键说明
 
-本文对应当前 Windows 配置：
+本文对应当前跨平台配置：
 
-- Neovim 配置：`C:\Users\ruan\AppData\Local\nvim`
-- Neovim 数据：`C:\Users\ruan\AppData\Local\nvim-data`
+- Windows 配置：`%LOCALAPPDATA%\nvim`
+- Linux 配置：`~/.config/nvim`
+- 数据目录：由 `:lua print(vim.fn.stdpath("data"))` 查询
 - Leader 键：空格
 - Neovim：0.12.5
 - 插件管理：lazy.nvim
@@ -14,8 +15,8 @@
 
 先在 PowerShell 进入工程根目录，再启动 Neovim：
 
-```powershell
-cd D:\path\to\project
+```text
+cd <项目根目录>
 nvim .
 ```
 
@@ -172,7 +173,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 手动指定解释器：
 
 ```vim
-:DebugPython D:\path\to\.venv\Scripts\python.exe
+:DebugPython <Python 可执行文件路径>
 ```
 
 恢复自动选择：

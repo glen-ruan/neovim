@@ -31,7 +31,6 @@ function Resolve-UV4Path {
     }
 
     foreach ($candidate in @(
-        'D:\privateSoftware\keil5\core\UV4\UV4.exe',
         'C:\Keil_v5\UV4\UV4.exe',
         'C:\Keil\UV4\UV4.exe'
     )) {

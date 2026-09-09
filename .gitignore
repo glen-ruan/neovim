@@ -20,4 +20,7 @@ foo.*
 Thumbs.db
 Desktop.ini
 
+# Machine-local paths and preferences
+/local.lua
+
 # Keep lazy-lock.json under version control so plugin versions stay reproducible.

@@ -1,4 +1,5 @@
 local M = {}
+local platform = require("config.platform")
 
 local function notify_result(result)
   local text = vim.trim(table.concat({ result.stdout or "", result.stderr or "" }, "\n"))
@@ -22,12 +23,9 @@ local function target_names(project)
 end
 
 local function run(project, target)
-  local powershell = vim.fn.exepath("pwsh")
-  if powershell == "" then
-    powershell = vim.fn.exepath("powershell")
-  end
+  local powershell = platform.find_executable("powershell", "NVIM_POWERSHELL", { "pwsh", "powershell" })
   local script = vim.fn.stdpath("config") .. "/tools/keil-clangd.ps1"
-  if powershell == "" or vim.fn.filereadable(script) ~= 1 then
+  if not powershell or vim.fn.filereadable(script) ~= 1 then
     vim.notify("Keil clangd generator is not installed correctly.", vim.log.levels.ERROR)
     return
   end
@@ -47,6 +45,10 @@ local function run(project, target)
     "-OutputDirectory",
     vim.fn.getcwd(),
   }
+  local uv4 = platform.find_executable("uv4", "UV4_EXE", { "UV4.exe" })
+  if uv4 then
+    vim.list_extend(command, { "-UV4", uv4 })
+  end
 
   vim.notify("正在从 µVision 工程生成 compile_commands.json…")
   vim.system(command, { cwd = vim.fn.getcwd(), text = true }, function(result)

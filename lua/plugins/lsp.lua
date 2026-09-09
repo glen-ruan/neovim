@@ -71,8 +71,20 @@ return {
       for name, config in pairs(servers) do
         config.capabilities = capabilities
         vim.lsp.config(name, config)
-        vim.lsp.enable(name)
+        if config.cmd and vim.fn.executable(config.cmd[1]) == 1 then
+          vim.lsp.enable(name)
+        end
       end
+
+      vim.api.nvim_create_user_command("LspAvailability", function()
+        local lines = {}
+        for name, config in pairs(servers) do
+          local command = config.cmd and config.cmd[1]
+          local path = command and vim.fn.exepath(command) or ""
+          table.insert(lines, string.format("%-10s %s", name, path ~= "" and path or "missing"))
+        end
+        vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "LSP availability" })
+      end, { desc = "显示语言服务器可用状态" })
 
       require("lspsaga").setup({
         ui = { border = "rounded" },

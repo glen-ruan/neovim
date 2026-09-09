@@ -1,4 +1,5 @@
 local M = {}
+local platform = require("config.platform")
 
 local function output_text(result)
   local parts = {}
@@ -17,13 +18,10 @@ function M.generate(configuration)
     return
   end
 
-  local powershell = vim.fn.exepath("pwsh")
-  if powershell == "" then
-    powershell = vim.fn.exepath("powershell")
-  end
+  local powershell = platform.find_executable("powershell", "NVIM_POWERSHELL", { "pwsh", "powershell" })
 
   local script = vim.fn.stdpath("config") .. "/tools/iar-clangd.ps1"
-  if powershell == "" or vim.fn.filereadable(script) ~= 1 then
+  if not powershell or vim.fn.filereadable(script) ~= 1 then
     vim.notify("IAR clangd generator is not installed correctly.", vim.log.levels.ERROR)
     return
   end
@@ -39,6 +37,10 @@ function M.generate(configuration)
   }
   if configuration and configuration ~= "" then
     vim.list_extend(command, { "-Configuration", configuration })
+  end
+  local iarbuild = platform.find_executable("iarbuild", "IARBUILD", { "IarBuild.exe" })
+  if iarbuild then
+    vim.list_extend(command, { "-IarBuild", iarbuild })
   end
 
   vim.notify("正在读取 IAR 工程并生成 compile_commands.json…")

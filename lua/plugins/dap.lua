@@ -9,18 +9,15 @@ return {
     config = function()
       local dap = require("dap")
       local ui = require("dapui")
-      local debugpy_root = vim.fn.stdpath("data") .. "/tools/debugpy"
-      local adapter = debugpy_root .. (vim.fn.has("win32") == 1 and "/Scripts/python.exe" or "/bin/python")
+      local platform = require("config.platform")
+      local adapter = platform.debugpy_python()
 
-      if vim.fn.executable(adapter) ~= 1 then
-        vim.notify("未找到 debugpy，请检查 " .. adapter, vim.log.levels.ERROR)
-        return
+      if adapter then
+        require("dap-python").setup(adapter, { include_configs = false })
       end
 
-      require("dap-python").setup(adapter, { include_configs = false })
-
       -- Windows 下改用本地 TCP，避免退出调试时出现 stdio/SIGINT 警告。
-      if vim.fn.has("win32") == 1 then
+      if adapter and platform.is_windows then
         local python_adapter = dap.adapters.python
         dap.adapters.python = function(callback, config)
           python_adapter(function(resolved)
@@ -45,42 +42,7 @@ return {
         if vim.g.debug_python then
           return vim.g.debug_python
         end
-
-        for _, prefix in ipairs({ vim.env.VIRTUAL_ENV or "", vim.env.CONDA_PREFIX or "" }) do
-          if prefix ~= "" then
-            local suffixes = vim.fn.has("win32") == 1 and { "/Scripts/python.exe", "/python.exe" }
-              or { "/bin/python", "/bin/python3" }
-            for _, suffix in ipairs(suffixes) do
-              if vim.fn.executable(prefix .. suffix) == 1 then
-                return prefix .. suffix
-              end
-            end
-          end
-        end
-
-        local dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-        while dir and dir ~= "" do
-          for _, name in ipairs({ ".venv", "venv", ".env", "env" }) do
-            local suffixes = vim.fn.has("win32") == 1 and { "/Scripts/python.exe", "/python.exe" }
-              or { "/bin/python", "/bin/python3" }
-            for _, suffix in ipairs(suffixes) do
-              local candidate = dir .. "/" .. name .. suffix
-              if vim.fn.executable(candidate) == 1 then
-                return candidate
-              end
-            end
-          end
-          local parent = vim.fs.dirname(dir)
-          if parent == dir then
-            break
-          end
-          dir = parent
-        end
-
-        local preferred = vim.fn.has("win32") == 1 and "python" or "python3"
-        local fallback = vim.fn.has("win32") == 1 and "python3" or "python"
-        local system_python = vim.fn.exepath(preferred)
-        return system_python ~= "" and system_python or vim.fn.exepath(fallback)
+        return platform.project_python(vim.api.nvim_buf_get_name(0))
       end
 
       require("dap-python").resolve_python = python
@@ -130,6 +92,10 @@ return {
 
       local map = vim.keymap.set
       map("n", "<F5>", function()
+        if not adapter then
+          vim.notify("未找到 debugpy；请执行 :MasonToolsInstall 或设置 DEBUGPY_PYTHON", vim.log.levels.ERROR)
+          return
+        end
         if not dap.session() then
           vim.cmd("update")
         end
@@ -164,7 +130,11 @@ return {
         else
           vim.notify("找不到 Python：" .. path, vim.log.levels.ERROR)
         end
-      end, { nargs = "?", complete = "file", desc = "选择调试使用的 Python；无参数时恢复自动选择" })
+      end, {
+        nargs = "?",
+        complete = "file",
+        desc = "选择调试使用的 Python；无参数时恢复自动选择",
+      })
     end,
   },
 }
