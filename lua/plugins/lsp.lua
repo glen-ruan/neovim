@@ -67,15 +67,13 @@ return {
               },
             },
           },
-          on_init = function(client)
-            local python = platform.project_python(client.root_dir)
+          before_init = function(_, config)
+            local python = platform.project_python(config.root_dir)
             if python then
-              local settings = {
-                python = { pythonPath = python },
-              }
-              client.settings = vim.tbl_deep_extend("force", client.settings or {}, settings)
-              client.config.settings = vim.tbl_deep_extend("force", client.config.settings or {}, settings)
-              client:notify("workspace/didChangeConfiguration", { settings = nil })
+              -- Client 创建时已经引用了这张 settings 表，必须原地修改。
+              -- 替换整张表会导致 Pyright 继续使用创建客户端时的旧配置。
+              config.settings.python = config.settings.python or {}
+              config.settings.python.pythonPath = python
             else
               vim.schedule(function()
                 vim.notify("当前工程没有可用的 .venv，Pyright 未绑定 Python 环境", vim.log.levels.WARN)
