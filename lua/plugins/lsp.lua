@@ -13,6 +13,17 @@ return {
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local platform = require("config.platform")
 
+      local hover_handler = vim.lsp.handlers.hover
+      local signature_handler = vim.lsp.handlers.signature_help
+      vim.lsp.handlers["textDocument/hover"] = function(err, result, context, config)
+        config = vim.tbl_deep_extend("force", config or {}, { border = "rounded" })
+        return hover_handler(err, result, context, config)
+      end
+      vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, context, config)
+        config = vim.tbl_deep_extend("force", config or {}, { border = "rounded" })
+        return signature_handler(err, result, context, config)
+      end
+
       local servers = {
         clangd = {
           cmd = { "clangd", "--background-index", "--clang-tidy" },

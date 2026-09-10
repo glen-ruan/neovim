@@ -112,6 +112,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 | 查找引用 | `g r` |
 | 跳转到实现 | `g I` |
 | 跳转到类型定义 | `g y` |
+| 查看光标下符号说明 | `Shift+K`，圆角浮窗 |
 | 查看调用者 | `g a i` |
 | 查看被调用函数 | `g a o` |
 | 当前文件符号 | `空格 s s` |
@@ -140,7 +141,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 | 上一项 | `Shift+Tab` 或 `↑` |
 | 接受补全 | `Enter` |
 | 主动打开补全/文档 | `Ctrl+Space` |
-| 函数签名提示 | `Ctrl+K` |
+| 函数签名提示 | `Ctrl+K`，圆角浮窗 |
 | 关闭补全窗口 | `Esc` |
 
 补全来源包括 LSP、当前 Buffer、文件路径和代码片段。
