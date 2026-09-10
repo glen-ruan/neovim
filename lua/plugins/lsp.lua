@@ -35,12 +35,10 @@ return {
             })
           end
 
-          for _, lhs in ipairs({ "<C-k>", "<C-S-k>" }) do
-            vim.keymap.set({ "n", "i" }, lhs, show_signature_help, {
-              buffer = args.buf,
-              desc = "LSP：查看函数签名",
-            })
-          end
+          vim.keymap.set("i", "<C-s>", show_signature_help, {
+            buffer = args.buf,
+            desc = "LSP：查看函数签名（原生快捷键）",
+          })
         end,
       })
 
