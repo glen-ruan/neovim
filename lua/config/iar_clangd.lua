@@ -52,7 +52,7 @@ function M.generate(configuration)
       local message = output_text(result)
       if result.code == 0 then
         vim.notify(message ~= "" and message or "IAR clangd 配置已生成")
-        pcall(vim.cmd, "LspRestart")
+        pcall(vim.cmd, "lsp restart")
       else
         vim.notify(message ~= "" and message or "IAR clangd 配置生成失败", vim.log.levels.ERROR)
       end

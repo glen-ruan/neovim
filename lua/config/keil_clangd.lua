@@ -5,7 +5,7 @@ local function notify_result(result)
   local text = vim.trim(table.concat({ result.stdout or "", result.stderr or "" }, "\n"))
   if result.code == 0 then
     vim.notify(text ~= "" and text or "Keil clangd 配置已生成")
-    pcall(vim.cmd, "LspRestart")
+    pcall(vim.cmd, "lsp restart")
   else
     vim.notify(text ~= "" and text or "Keil clangd 配置生成失败", vim.log.levels.ERROR)
   end

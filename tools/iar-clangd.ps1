@@ -326,4 +326,4 @@ $json = ConvertTo-Json -InputObject $entries.ToArray() -Depth 6
 
 Write-Host "Generated $outputPath"
 Write-Host "Compiler entries: $($entries.Count)"
-Write-Host 'Restart clangd after regeneration (:LspRestart in Neovim).'
+Write-Host 'Restart clangd after regeneration (:lsp restart in Neovim).'

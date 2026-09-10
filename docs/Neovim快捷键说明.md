@@ -130,7 +130,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 重启语言服务：
 
 ```vim
-:LspRestart
+:lsp restart
 ```
 
 ## 8. 自动补全
@@ -174,6 +174,30 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 Python 的标准输出和错误信息显示在底部 DAP REPL 中。程序正常结束后调试面板会保留，查看完输出后按 `F6` 关闭；此时会恢复按 `F5` 前的分屏比例和激活窗口。也可以用 `空格 d u` 隐藏或重新打开面板。
 
 Python LSP 和调试器当前只使用工程目录（或其父目录）中的 `.venv`。全局 Python、Conda、`venv`、`.env` 和 `env` 的自动回退已暂时禁用，避免全局安装的包掩盖当前工程缺少的依赖。已有 `pyproject.toml` 的 uv 工程用 `uv add 包名` 安装依赖；只有 `.venv` 的简单工程可用 `uv pip install --python .venv 包名`。
+
+### uv 项目的正确创建流程
+
+先进入准备作为项目根目录的文件夹，并确认位置：
+
+```powershell
+cd "D:\path\to\project"
+Get-Location
+uv init .
+```
+
+在 uv 0.9.x 中，普通 `uv init .` 默认会创建 `.git/`、`.gitignore`、`.python-version`、`README.md`、`main.py` 和 `pyproject.toml`。此时还没有完整同步环境；继续执行：
+
+```powershell
+uv sync
+```
+
+`uv sync` 会创建或更新 `.venv` 和 `uv.lock`。安装依赖使用：
+
+```powershell
+uv add numpy requests
+```
+
+`uv init --bare .` 才是只创建 `pyproject.toml` 的精简结构；`uv init 子目录名` 会在当前目录下另建一个子目录。项目已经存在 `pyproject.toml` 时不要重复执行 `uv init`，直接使用 `uv sync`。
 
 手动指定解释器：
 

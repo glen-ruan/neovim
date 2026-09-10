@@ -252,7 +252,7 @@ try {
 
     Write-Host "Generated $outputPath"
     Write-Host "Target: $targetName; compiler: $compiler; CPU: $cpu; source entries: $($entries.Count)"
-    Write-Host 'Restart clangd after regeneration (:LspRestart in Neovim).'
+    Write-Host 'Restart clangd after regeneration (:lsp restart in Neovim).'
 }
 finally {
     if ($null -ne $previousCprj) {
