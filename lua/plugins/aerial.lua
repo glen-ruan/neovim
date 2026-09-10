@@ -39,7 +39,7 @@ return -- 使用 lazy.nvim 安装示例
       guide_chars = "│ ─├─└", -- 默认值，可自定义
       autojump = true,
     })
-    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle! float<CR>", { desc = "浮动代码大纲" })
+    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle float<CR>", { desc = "浮动代码大纲" })
   end,
   -- 如果使用懒加载
   keys = { "<leader>o" },
