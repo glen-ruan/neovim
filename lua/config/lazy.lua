@@ -35,6 +35,7 @@ require("lazy").setup({
     { import = "plugins.markdown" },
     { import = "plugins.renamer" },
     { import = "plugins.dap" },
+    { import = "plugins.diffview" },
   },
   defaults = {
     lazy = false,
