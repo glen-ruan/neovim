@@ -26,6 +26,7 @@ function M.generate(configuration)
     return
   end
 
+  local working_directory = vim.fn.getcwd()
   local command = {
     powershell,
     "-NoLogo",
@@ -34,6 +35,8 @@ function M.generate(configuration)
     "Bypass",
     "-File",
     script,
+    "-OutputDirectory",
+    working_directory,
   }
   if configuration and configuration ~= "" then
     vim.list_extend(command, { "-Configuration", configuration })
@@ -44,7 +47,7 @@ function M.generate(configuration)
   end
 
   vim.notify("正在读取 IAR 工程并生成 compile_commands.json…")
-  vim.system(command, { cwd = vim.fn.getcwd(), text = true }, function(result)
+  vim.system(command, { cwd = working_directory, text = true }, function(result)
     vim.schedule(function()
       local message = output_text(result)
       if result.code == 0 then
