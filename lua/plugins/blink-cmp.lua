@@ -50,7 +50,6 @@ return {
       ["<CR>"] = { "accept", "fallback" },
       ["<Esc>"] = { "hide", "fallback" },
       ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
-      ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
     },
 
     appearance = {
@@ -129,13 +128,9 @@ return {
       },
     },
 
-    signature = {
-      enabled = true,
-      window = {
-        border = "rounded",
-        scrollbar = false,
-      },
-    },
+    -- 使用 Neovim 原生 LSP 签名窗口，避免部分 clangd 返回值使 Blink
+    -- 的活动参数高亮错误扩展到整个浮动窗口。
+    signature = { enabled = false },
 
     sources = {
       default = { "lsp", "path", "snippets", "buffer" },

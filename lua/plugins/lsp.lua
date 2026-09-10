@@ -13,12 +13,34 @@ return {
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local platform = require("config.platform")
 
+      -- 只强调当前参数文字，避免配色方案给签名窗口铺满背景色。
+      vim.api.nvim_set_hl(0, "LspSignatureActiveParameter", { bold = true, underline = true })
+
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
         callback = function(args)
           vim.keymap.set("n", "K", function()
-            vim.lsp.buf.hover({ border = "rounded" })
+            vim.lsp.buf.hover({
+              border = "rounded",
+              max_width = 100,
+              max_height = 24,
+            })
           end, { buffer = args.buf, desc = "LSP：查看符号说明" })
+
+          local function show_signature_help()
+            vim.lsp.buf.signature_help({
+              border = "rounded",
+              max_width = 100,
+              max_height = 12,
+            })
+          end
+
+          for _, lhs in ipairs({ "<C-k>", "<C-S-k>" }) do
+            vim.keymap.set({ "n", "i" }, lhs, show_signature_help, {
+              buffer = args.buf,
+              desc = "LSP：查看函数签名",
+            })
+          end
         end,
       })
 
