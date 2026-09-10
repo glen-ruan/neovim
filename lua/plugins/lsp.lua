@@ -119,7 +119,12 @@ return {
       })
 
       require("trouble").setup({
-        win = { position = "bottom", size = 10 },
+        win = {
+          type = "float",
+          relative = "editor",
+          border = "rounded",
+          size = { width = 0.85, height = 0.7 },
+        },
         keys = {
           q = "close",
           r = "refresh",

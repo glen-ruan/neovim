@@ -23,16 +23,23 @@ return -- 使用 lazy.nvim 安装示例
 
       layout = {
         resize_to_content = false,
-        min_width = 0.15,
-        width = 0.15,
+        min_width = 30,
+        width = 0.35,
+        max_width = { 60, 0.5 },
         placement = "edge",
         default_direction = "prefer_right",
+      },
+      float = {
+        border = "rounded",
+        relative = "editor",
+        max_height = 0.8,
+        height = 0.7,
       },
       show_guides = true, -- 👈 启用缩进引导线（分割线）
       guide_chars = "│ ─├─└", -- 默认值，可自定义
       autojump = true,
     })
-    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>")
+    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle! float<CR>", { desc = "浮动代码大纲" })
   end,
   -- 如果使用懒加载
   keys = { "<leader>o" },

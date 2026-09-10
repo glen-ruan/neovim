@@ -12,6 +12,7 @@ return {
       local platform = require("config.platform")
       local adapter = platform.debugpy_python()
       local layout_before_debug
+      local debug_ui_open = false
 
       local function save_layout()
         if layout_before_debug then
@@ -27,6 +28,7 @@ return {
         local layout = layout_before_debug
         layout_before_debug = nil
         ui.close()
+        debug_ui_open = false
         if not layout then
           return
         end
@@ -109,6 +111,7 @@ return {
       dap.listeners.after.event_initialized["user_dapui"] = function()
         save_layout()
         ui.open()
+        debug_ui_open = true
       end
 
       vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError" })
@@ -134,7 +137,15 @@ return {
         dap.terminate()
         restore_layout()
       end, { desc = "调试：停止" })
-      map("n", "<leader>du", ui.toggle, { desc = "调试：切换面板" })
+      map("n", "<leader>du", function()
+        if debug_ui_open then
+          restore_layout()
+        else
+          save_layout()
+          ui.open()
+          debug_ui_open = true
+        end
+      end, { desc = "调试：切换面板并恢复布局" })
       map({ "n", "v" }, "<leader>de", ui.eval, { desc = "调试：查看表达式" })
       map("n", "<leader>db", function()
         vim.ui.input({ prompt = "Breakpoint condition: " }, function(value)
