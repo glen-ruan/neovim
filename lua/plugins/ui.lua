@@ -9,7 +9,8 @@ return {
   -- 语法高亮 & Treesitter
   {
     "nvim-treesitter/nvim-treesitter",
-    lazy = false,
+    event = { "BufReadPre", "BufNewFile" },
+    cmd = { "TSUpdate", "TSInstall", "TSInstallConfigured" },
     branch = "main",
     build = ":TSUpdate",
     dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },

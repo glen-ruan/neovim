@@ -7,7 +7,6 @@ return {
       { "folke/trouble.nvim", cmd = "Trouble" },
       { "j-hui/fidget.nvim", opts = {} },
       "saghen/blink.cmp",
-      "mason-org/mason-lspconfig.nvim",
     },
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()

@@ -92,7 +92,7 @@ git clone --branch main https://github.com/glen-ruan/neovim.git ~/.config/nvim
 :LspAvailability
 ```
 
-`lazy-lock.json` 已纳入版本控制，引导脚本会严格恢复锁定的插件版本并安装通用开发工具。需要主动升级插件时，在 Neovim 中执行 `:Lazy update` 并提交更新后的锁文件。`cmake-language-server` 不由 Mason 自动安装，因为其 Python 版本要求可能与系统 Python 冲突；安装方法见嵌入式开发流程。
+`lazy-lock.json` 已纳入版本控制，引导脚本会严格恢复锁定的插件版本并安装通用开发工具。正常启动不会在后台检查插件或 Mason 工具；需要升级插件时执行 `:Lazy update`，需要安装或修复通用开发工具时执行 `:MasonToolsInstall`。`cmake-language-server` 不由 Mason 安装，因为其 Python 版本要求可能与系统 Python 冲突；安装方法见嵌入式开发流程。
 
 ## 更新和保存配置
 

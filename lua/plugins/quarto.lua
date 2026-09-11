@@ -1,6 +1,7 @@
 return {
     {
         "quarto-dev/quarto-nvim",
+        ft = "quarto",
         dependencies = {
             { "jmbuhr/otter.nvim", opts = { buffers = { set_filetype = true } } },
             "nvim-treesitter/nvim-treesitter",

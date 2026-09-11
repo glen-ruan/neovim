@@ -1,11 +1,10 @@
 return {
   "smjonas/inc-rename.nvim",
-
-  config = function()
-    require("inc_rename").setup({
-      input_buffer_type = "snacks",
-    })
-
-    vim.keymap.set("n", "<leader>rn", ":IncRename ")
-  end,
+  cmd = "IncRename",
+  keys = {
+    { "<leader>rn", ":IncRename ", desc = "LSP：重命名符号" },
+  },
+  opts = {
+    input_buffer_type = "snacks",
+  },
 }

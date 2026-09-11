@@ -43,8 +43,9 @@ require("lazy").setup({
   },
   install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {
-    enabled = true, -- check for plugin updates periodically
-    notify = false, -- notify on update
+    -- 使用 :Lazy check / :Lazy update 手动检查，避免后台网络和扫描。
+    enabled = false,
+    notify = false,
   },
   rocks = { enabled = false },
   performance = {
