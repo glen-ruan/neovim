@@ -44,9 +44,9 @@ function M.check()
 
   local python = platform.project_python()
   if python then
-    vim.health.ok("Python: " .. python)
+    vim.health.ok("Project .venv Python: " .. python)
   else
-    vim.health.warn("Python was not found")
+    vim.health.warn("No project .venv was found from the current working directory")
   end
 
   local debugpy = platform.debugpy_python()

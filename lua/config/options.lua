@@ -24,7 +24,7 @@ vim.diagnostic.config({
   update_in_insert = false,
 })
 
--- 创建 :H 命令，在新 tab 中打开帮助
+-- 创建 :Hv 命令，在垂直分屏中打开帮助
 vim.api.nvim_create_user_command("Hv", function(opts)
   vim.cmd("vertical help " .. (opts.args ~= "" and opts.args or ""))
 end, { nargs = "*", complete = "help" })

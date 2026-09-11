@@ -6,6 +6,7 @@ local M = {}
 M.term_buf = nil
 M.term_win = nil
 M.term_chan = nil
+M.term_shell_name = nil
 
 local float_width = 0.75
 local float_height = 0.75
@@ -27,6 +28,22 @@ end
 
 -- 打开或复用浮窗终端
 function M.open()
+  if M.term_buf and vim.api.nvim_buf_is_valid(M.term_buf) and M.term_chan then
+    local status = vim.fn.jobwait({ M.term_chan }, 0)[1]
+    if status ~= -1 then
+      if M.term_win and vim.api.nvim_win_is_valid(M.term_win) then
+        vim.api.nvim_win_close(M.term_win, true)
+      end
+      if vim.api.nvim_buf_is_valid(M.term_buf) then
+        vim.api.nvim_buf_delete(M.term_buf, { force = true })
+      end
+      M.term_buf = nil
+      M.term_win = nil
+      M.term_chan = nil
+      M.term_shell_name = nil
+    end
+  end
+
   if M.term_buf and vim.api.nvim_buf_is_valid(M.term_buf) then
     if M.term_win and vim.api.nvim_win_is_valid(M.term_win) then
       vim.api.nvim_set_current_win(M.term_win)
@@ -93,6 +110,7 @@ function M.open()
   shell = shell or (vim.fn.has("win32") == 1 and "cmd" or "sh")
   local args = { shell }
   local shell_name = vim.fs.basename(shell):lower()
+  M.term_shell_name = shell_name
   if shell_name == "zsh" or shell_name == "bash" then
     table.insert(args, "-i")
   end
@@ -111,9 +129,13 @@ end
 
 -- 清空浮窗终端
 function M.clear()
-  if M.term_buf and vim.api.nvim_buf_is_valid(M.term_buf) then
-    vim.api.nvim_buf_set_lines(M.term_buf, 0, -1, false, {})
+  local command = "clear"
+  if M.term_shell_name == "pwsh.exe" or M.term_shell_name == "powershell.exe" then
+    command = "Clear-Host"
+  elseif M.term_shell_name == "cmd.exe" then
+    command = "cls"
   end
+  M.send(command)
 end
 
 -- 返回模块表

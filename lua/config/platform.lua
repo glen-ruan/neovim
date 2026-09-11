@@ -5,9 +5,17 @@ M.is_linux = vim.fn.has("linux") == 1
 M.path_separator = M.is_windows and ";" or ":"
 
 local local_config_path = vim.fs.joinpath(vim.fn.stdpath("config"), "local.lua")
-local ok, settings = pcall(dofile, local_config_path)
-if not ok or type(settings) ~= "table" then
-  settings = {}
+local settings = {}
+if vim.fn.filereadable(local_config_path) == 1 then
+  local ok, result = pcall(dofile, local_config_path)
+  if ok and type(result) == "table" then
+    settings = result
+  else
+    vim.schedule(function()
+      local reason = ok and "文件必须返回一个 Lua table" or tostring(result)
+      vim.notify("无法加载本机配置 " .. local_config_path .. ":\n" .. reason, vim.log.levels.ERROR)
+    end)
+  end
 end
 M.settings = settings
 

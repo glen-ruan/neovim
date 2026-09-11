@@ -121,13 +121,26 @@ return {
         },
       }
 
+      local function enable_available_servers()
+        for name, config in pairs(servers) do
+          if config.cmd and vim.fn.executable(config.cmd[1]) == 1 then
+            vim.lsp.enable(name)
+          end
+        end
+      end
+
       for name, config in pairs(servers) do
         config.capabilities = capabilities
         vim.lsp.config(name, config)
-        if config.cmd and vim.fn.executable(config.cmd[1]) == 1 then
-          vim.lsp.enable(name)
-        end
       end
+      enable_available_servers()
+
+      -- Mason 在本次启动中完成安装后立即启用新语言服务器。
+      vim.api.nvim_create_autocmd("User", {
+        group = vim.api.nvim_create_augroup("UserEnableMasonLsp", { clear = true }),
+        pattern = "MasonToolsUpdateCompleted",
+        callback = enable_available_servers,
+      })
 
       vim.api.nvim_create_user_command("LspAvailability", function()
         local lines = {}
