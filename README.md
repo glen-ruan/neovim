@@ -26,13 +26,14 @@ tools/keil-clangd.ps1            Keil 编译数据库生成器
 tools/clangd-compat/include      嵌入式 clangd 兼容头文件
 docs                             使用文档
 scripts                          引导、检查和可选工具安装脚本
+scripts/bootstrap.lua            引导脚本主体：恢复插件、安装并校验 Mason 工具与 Treesitter parser
 local.example.lua                本机私有路径配置模板
 lazy-lock.json                   插件版本锁定文件
 VERSION                          发行版本号
 stylua.toml                      Lua 格式化配置
 ```
 
-插件、Mason 工具、Treesitter parser、日志和缓存位于 `stdpath("data")`，不属于本仓库。Windows 通常是 `%LOCALAPPDATA%\nvim-data`，Linux 通常是 `~/.local/share/nvim`。
+插件、Mason 工具、Treesitter parser 和日志位于 `stdpath("data")`，不属于本仓库。Windows 通常是 `%LOCALAPPDATA%\nvim-data`，Linux 通常是 `~/.local/share/nvim`。字节码缓存位于 `stdpath("cache")`（Windows 上在 `%TEMP%\nvim` 下，本配置在 Windows 已将其关闭）。
 
 ## 主要组件
 
@@ -93,7 +94,7 @@ git clone --branch main https://github.com/glen-ruan/neovim.git ~/.config/nvim
 :LspAvailability
 ```
 
-`lazy-lock.json` 已纳入版本控制，引导脚本会严格恢复锁定的插件版本并安装通用开发工具。正常启动不会在后台检查插件或 Mason 工具；需要升级插件时执行 `:Lazy update`，需要安装或修复通用开发工具时执行 `:MasonToolsInstall`。`cmake-language-server` 不由 Mason 安装，因为其 Python 版本要求可能与系统 Python 冲突；安装方法见嵌入式开发流程。
+`lazy-lock.json` 已纳入版本控制，引导脚本会严格恢复锁定的插件版本并安装通用开发工具，任何一步失败都会以非零退出码结束并说明失败原因。正常启动不会在后台检查插件或 Mason 工具；需要升级插件时执行 `:Lazy update`，需要安装或修复通用开发工具时执行 `:MasonToolsInstall`。`cmake-language-server` 不由 Mason 安装，因为其 Python 版本要求可能与系统 Python 冲突；安装方法见嵌入式开发流程。
 
 ## 更新和保存配置
 

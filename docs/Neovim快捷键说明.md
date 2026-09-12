@@ -154,7 +154,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 | 操作 | 快捷键或命令 |
 |---|---|
 | 打开/关闭浮动终端 | `空格 f t` |
-| 从终端输入模式回到普通模式 | `Esc` |
+| 从终端输入模式回到普通模式 | 连按两次 `Esc`（单次 `Esc` 和 `<C-w>` 留给终端里运行的程序） |
 | 临时执行一个 PowerShell 命令 | `:!命令` |
 | 打开普通终端 Buffer | `:terminal` |
 
@@ -176,7 +176,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 
 Python 的标准输出和错误信息显示在底部 DAP REPL 中。程序正常结束后调试面板会保留，查看完输出后按 `F6` 关闭；此时会恢复按 `F5` 前的分屏比例和激活窗口。也可以用 `空格 d u` 隐藏或重新打开面板。
 
-Python LSP 和调试器当前只使用工程目录（或其父目录）中的 `.venv`。全局 Python、Conda、`venv`、`.env` 和 `env` 的自动回退已暂时禁用，避免全局安装的包掩盖当前工程缺少的依赖。已有 `pyproject.toml` 的 uv 工程用 `uv add 包名` 安装依赖；只有 `.venv` 的简单工程可用 `uv pip install --python .venv 包名`。
+Python LSP 和调试器当前只使用工程目录（或其父目录）中的 `.venv`。全局 Python、Conda、`venv`、`.env` 和 `env` 的自动回退已暂时禁用，避免全局安装的包掩盖当前工程缺少的依赖。已有 `pyproject.toml` 的 uv 工程用 `uv add 包名` 安装依赖；只有 `.venv` 的简单工程可用 `uv pip install --python .venv 包名`。工程 `.venv` 里缺少的包会直接报错：Pyright 的 `reportMissingImports` / `reportMissingModuleSource` 设为 error 级，运行时也会抛出 `ModuleNotFoundError`，不会静默回退。
 
 ### uv 项目的正确创建流程
 
@@ -262,3 +262,5 @@ uv add numpy requests
 | 安装配置中的 Treesitter parser | `:TSInstallConfigured` |
 | 检查格式化工具 | `:ConformInfo` |
 | 查看当前 LSP | `:LspInfo` |
+
+首次安装或迁移机器时，运行仓库根目录的 `scripts/bootstrap.ps1`（Windows）或 `scripts/bootstrap.sh`（Linux/macOS）即可完成插件恢复、Mason 工具安装和 Treesitter parser 安装；判定逻辑在 `scripts/bootstrap.lua` 中，任一步失败都会以非零退出码结束，不会在工具缺失时谎报成功。

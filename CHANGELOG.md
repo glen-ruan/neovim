@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.4 - 2026-09-12
+
+- Enable the LaTeX toolchain (VimTeX + tex-fmt) and keep latexindent's log and backups out of the working directory.
+- Drop the unused `header.nvim` spec that was never imported.
+- Free the native `gr*` LSP mappings by moving the references picker to `grr`, and add `<leader>ca` for code actions.
+- Use aerial's supported `guides` keys instead of the nonexistent `guide_chars`.
+- Remove keymaps that shadowed core Vim behavior (`vc`/`vv`/`vl`, `dw`, `<C-f>`, `<C-a>`, `<C-c>`, `<C-v>`, `p`); terminal `Esc` now takes a double press.
+- Make the bootstrap scripts exit non-zero when a step fails, and verify Mason tools and Treesitter parsers after installing them.
+- Add tool directories to `PATH` even before Mason creates them.
+- Put the clangd compatibility headers last so they no longer shadow toolchain headers.
+- Disable the lazy bytecode cache on Windows only, where the cache lives under `%TEMP%`.
+
 ## 1.0.3 - 2026-09-09
 
 - Restore the pre-debug split sizes and focused window when `F6` closes DAP.
