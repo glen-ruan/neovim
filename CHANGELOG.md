@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.6 - 2026-09-12
+
+- Treat `ripgrep` as a required dependency instead of optional search acceleration: `Snacks.picker.grep()` hardcodes `rg` with no fallback, so a missing one breaks the `空格 f g` keymap.
+- Report a missing `rg` as an error in `:checkhealth nvim_distribution` with the install command, and note that Mason does not provide the package.
+- Say what actually breaks in the bootstrap hints: a missing `rg` disables grep, while a missing `fd` only falls back to a slower file search.
+- Clarify in the README that `fdfind` alone already enables file and project search, and that the `fd` symlink is for the health check and `Snacks.picker.explorer()`.
+
 ## 1.0.5 - 2026-09-12
 
 - Check the LaTeX toolchain (`latexmk`, `xelatex`) and the Chinese typesetting packages (`ctex` / `xeCJK`) in `:checkhealth nvim_distribution`, with the install command in the advice.
