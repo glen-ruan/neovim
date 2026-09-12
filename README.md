@@ -57,6 +57,9 @@ stylua.toml                      Lua 格式化配置
   - 安装：`npm install -g tree-sitter-cli`
   - 只在编译 Treesitter parser 时需要（`:TSInstallConfigured!`）；已经编译好的 parser 不依赖它，所以缺了它日常编辑没有明显症状
   - 用 nvm 管理 Node 时，`npm install -g` 会装到当前 Node 版本下，切换 Node 版本后需要重新安装
+- `ripgrep`（`rg`）：`Snacks.picker.grep()`（`空格 f g`）唯一的后端，没有回退
+  - Ubuntu：`sudo apt install ripgrep`
+  - Mason 不提供这个包（注册表里没有 ripgrep），所以 `:MasonToolsInstall` 装不到它，只能用系统包管理器或官方静态二进制
 - 按实际工程安装 IAR 或 Keil 工具链
 
 以下依赖是可选的，缺失只会让对应功能不可用，不影响其余编辑工作。引导脚本和 `:checkhealth nvim_distribution` 都会提示缺失项：
@@ -65,8 +68,8 @@ stylua.toml                      Lua 格式化配置
   - Ubuntu：`sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk`
   - 只装 `texlive-latex-extra` 和 `latexmk` **不够**：`xelatex` 由 `texlive-xetex` 提供，缺失时编译会以退出码 127 失败
   - `latexindent`（`texlive-extra-utils`）只作为 `tex-fmt` 的格式化回退，`tex-fmt` 本身由 Mason 安装
-- **搜索加速**：`rg`、`fd`
-  - Ubuntu 上 `fd` 的包名是 `fd-find`，但可执行文件叫 `fdfind`，直接装完检查仍会报缺失，需要自己建软链：
+- **搜索加速**：`fd`
+  - Ubuntu 上包名是 `fd-find`，但可执行文件叫 `fdfind`。装了 `fdfind` 之后 `Snacks.picker.files()` 和 `projects()` 就能用（snacks 两个名字都接受），它比 `rg --files` 回退更快；再建个 `fd` 软链是为了让 `:checkhealth` 那项通过，并覆盖只认 `fd` 的 `Snacks.picker.explorer()`（本配置未绑定）：
     `sudo apt install fd-find && ln -s "$(command -v fdfind)" ~/.local/bin/fd`
 
 ## 本机配置

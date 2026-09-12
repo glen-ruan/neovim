@@ -90,6 +90,20 @@ local function tree_sitter()
   vim.health.ok("tree-sitter: " .. path .. (found and (" (" .. table.concat(found, ".") .. ")") or ""))
 end
 
+-- Snacks' grep picker hardcodes `rg` and has no fallback, so a missing ripgrep
+-- breaks a bound keymap instead of merely slowing searches down.
+local function ripgrep()
+  local path = vim.fn.exepath("rg")
+  if path ~= "" then
+    vim.health.ok("rg: " .. path)
+    return
+  end
+  vim.health.error("rg was not found", {
+    "`Snacks.picker.grep()` has no fallback, so the `<leader>fg` keymap cannot work without it.",
+    "Mason does not provide ripgrep; install it with the system package manager, e.g. Ubuntu: sudo apt install ripgrep",
+  })
+end
+
 function M.check()
   local platform = require("config.platform")
   vim.health.start("Neovim distribution")
@@ -104,7 +118,7 @@ function M.check()
   executable("tar", true)
   tree_sitter()
   compiler()
-  executable("rg", false)
+  ripgrep()
   executable("fd", false)
   executable("node", false)
   executable("clangd", false)

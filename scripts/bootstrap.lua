@@ -115,10 +115,12 @@ run("检查可选依赖", function()
     end
   end
 
-  for _, name in ipairs({ "rg", "fd" }) do
-    if vim.fn.executable(name) ~= 1 then
-      hints[#hints + 1] = name .. " 缺失，搜索会更慢"
-    end
+  if vim.fn.executable("rg") ~= 1 then
+    hints[#hints + 1] = "rg 缺失，Snacks.picker.grep() 没有回退，`空格 f g` 无法使用（Mason 不提供这个包）"
+    hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install ripgrep"
+  end
+  if vim.fn.executable("fd") ~= 1 then
+    hints[#hints + 1] = "fd 缺失，文件与项目搜索会退回更慢的实现"
   end
 
   if #hints > 0 then
