@@ -44,6 +44,7 @@ stylua.toml                      Lua 格式化配置
 - `nvim-dap`、`debugpy`：Python 调试
 - `conform.nvim`：代码格式化
 - `quarto-nvim`、`otter.nvim`：QMD 支持
+- `vimtex`：LaTeX 编译（latexmk -xelatex）和 PDF 预览
 - `gitsigns.nvim`：Git 修改标记
 
 ## 环境要求

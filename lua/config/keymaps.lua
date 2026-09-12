@@ -33,24 +33,9 @@ map("n", "<leader>w", ":w<CR>", opts) -- 保存
 map("n", "<leader>q", ":q<CR>", opts) -- 关闭
 map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "关闭当前文件" })
 
--- 在终端模式中按 Esc 直接退出到普通模式
-map("t", "<Esc>", [[<C-\><C-n>]], opts)
-map("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
-
--- 可选：兼容终端中使用 Ctrl+C（仅在 GUI 中安全，终端中慎用）
-map("v", "<C-c>", [["+y]], opts)
-map("n", "<C-c>", [["+yy]], opts)
-
--- 黏贴到当前光标位置
-map("n", "<C-v>", [["+p]], opts)
-map("v", "<C-v>", [["+p]], opts)
-map("n", "p", [["+p]], opts)
-map("v", "p", [["+p]], opts)
-
--- 文本选择与跳转
-map("n", "vv", "v%", opts)
-map("n", "vc", "viw", opts)
-map("n", "vl", "V", opts)
+-- 在终端模式中连按两次 Esc 退出到普通模式：
+-- 终端里的单次 Esc 与 <C-w>（删除前一个词）保持可用。
+map("t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
 
 -- 清除查找高亮
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
@@ -76,9 +61,3 @@ vim.keymap.set("n", "<leader>tb", function()
     vim.o.showtabline = 0
   end
 end, { desc = "Toggle Bufferline" })
-
--- 普通模式下全选
-map("n", "<C-a>", "gg0vG$", opts)
-
-map("n", "dw","diw",opts)
-map("n","<C-f>","*")

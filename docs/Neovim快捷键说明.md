@@ -109,7 +109,7 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 |---|---|
 | 跳转到定义 | `g d` |
 | 跳转到声明 | `g D` |
-| 查找引用 | `g r` |
+| 查找引用 | `g r r` |
 | 跳转到实现 | `g I` |
 | 跳转到类型定义 | `g y` |
 | 查看光标下符号说明 | 普通模式按 `Shift+K`，圆角浮窗，最大宽度 100 列、高度 24 行 |
@@ -118,8 +118,11 @@ Snacks Picker 中使用 `Tab` 向下选择，`Shift+Tab` 向上选择，`Enter` 
 | 当前文件符号 | `空格 s s` |
 | 工作区符号 | `空格 s S` |
 | 重命名符号 | `空格 r n`，输入新名称后回车 |
+| 代码操作（quickfix/重构） | `空格 c a`，普通模式作用于光标处，可视模式作用于选区 |
 | 诊断列表（浮动窗口） | `空格 x x` 或 `空格 s d` |
 | 格式化当前文件 | `空格 c f` |
+
+`g r` 前缀保留了 Neovim 自带的 LSP 快捷键：`g r n` 重命名、`g r a` 代码操作、`g r i` 跳转实现、`g r t` 跳转类型定义。
 
 查看当前语言服务状态：
 
@@ -220,6 +223,10 @@ uv add numpy requests
 | QMD/Quarto 预览 | `空格 q p` |
 | 关闭 QMD 预览 | `空格 q c` |
 | LaTeX 编译 | 由 VimTeX 调用 `latexmk -xelatex` |
+| 开始 / 停止连续编译 | `\ll` / `\lk`（`\` 是 localleader，不是空格） |
+| 查看 PDF | `\lv`，交给系统默认 PDF 阅读器 |
+| 查看编译错误 | `\le` |
+| 格式化 `.tex` | `空格 c f`，优先用 `tex-fmt`，缺失时回退 `latexindent` |
 
 ## 12. Git 查看
 

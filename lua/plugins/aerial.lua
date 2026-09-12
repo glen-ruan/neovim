@@ -3,7 +3,7 @@ return -- 使用 lazy.nvim 安装示例
   "stevearc/aerial.nvim",
   config = function()
     require("aerial").setup({
-      backends = { "lsp", "treesitter" }, -- 优先 Treesitter，回退 LSP
+      backends = { "lsp", "treesitter" }, -- 优先 LSP，回退 Treesitter
       -- filter_kind = {
       --   "Class",
       --   "Constructor",
@@ -36,7 +36,12 @@ return -- 使用 lazy.nvim 安装示例
         height = 0.7,
       },
       show_guides = true, -- 👈 启用缩进引导线（分割线）
-      guide_chars = "│ ─├─└", -- 默认值，可自定义
+      guides = { -- 引导线使用的字符（aerial 中即 "guides"，没有 guide_chars 这个键）
+        mid_item = "├─",
+        last_item = "└─",
+        nested_top = "│ ",
+        whitespace = "  ",
+      },
       autojump = true,
     })
     vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle float<CR>", { desc = "浮动代码大纲" })

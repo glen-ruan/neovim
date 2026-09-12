@@ -25,6 +25,7 @@ return {
         "pyright",
         "shfmt",
         "stylua",
+        "tex-fmt",
         "texlab",
         "typescript-language-server",
       },

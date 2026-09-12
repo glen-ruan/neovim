@@ -50,7 +50,9 @@ table.insert(tool_paths, vim.fs.joinpath(data, "tools", "bin"))
 if platform.is_windows then
   table.insert(tool_paths, vim.fs.joinpath(data, "tools", "w64devkit", "bin"))
 end
-platform.prepend_path(tool_paths)
+-- must_exist = false：这些目录可能在本会话中才由 mason / uv 创建，
+-- 若因为"暂时不存在"被跳过，本次启动就找不到刚装好的语言服务器。
+platform.prepend_path(tool_paths, { must_exist = false })
 
 if platform.is_windows then
   local gcc = vim.fs.joinpath(data, "tools", "w64devkit", "bin", "gcc.exe")

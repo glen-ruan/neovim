@@ -264,7 +264,6 @@ function Convert-IarCommand {
         $arguments.Add('-std=gnu++17')
     }
     $arguments.AddRange([string[]] $other)
-    $arguments.Add("-I$CompatInclude")
 
     foreach ($define in @($officialIndexerDefines) + @($AdditionalDefines) + @($defines)) {
         $arguments.Add("-D$define")
@@ -272,6 +271,9 @@ function Convert-IarCommand {
     foreach ($include in $includes | Select-Object -Unique) {
         $arguments.Add("-I$include")
     }
+    # 兜底桩头必须排在 include 搜索路径的最后：放在最前会遮蔽 IAR 与 clang
+    # 自带的 stdio.h / string.h 等，让桩里没声明的符号全部报未声明。
+    $arguments.Add("-I$CompatInclude")
     foreach ($preinclude in $preincludes) {
         $arguments.Add('-include')
         $arguments.Add($preinclude)

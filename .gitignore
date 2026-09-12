@@ -2,6 +2,7 @@
 *.log
 *.tmp
 *.bak
+*.bak[0-9]*
 *.swp
 *.swo
 *~

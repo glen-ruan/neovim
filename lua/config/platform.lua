@@ -43,12 +43,15 @@ function M.find_executable(setting_name, environment_name, candidates)
   return nil
 end
 
-function M.prepend_path(paths)
+---@param paths string[]
+---@param opts? { must_exist?: boolean } 默认要求目录已存在；工具目录可能由本会话稍后安装的插件创建
+function M.prepend_path(paths, opts)
+  local must_exist = not (opts and opts.must_exist == false)
   local current = vim.env.PATH or ""
   local result = {}
   local present = {}
   for _, path in ipairs(paths) do
-    if path and path ~= "" and vim.fn.isdirectory(path) == 1 then
+    if path and path ~= "" and (not must_exist or vim.fn.isdirectory(path) == 1) then
       local normalized = vim.fs.normalize(path)
       local key = M.is_windows and normalized:lower() or normalized
       if not present[key] then

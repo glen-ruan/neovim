@@ -210,7 +210,6 @@ try {
                 $arguments.Add('-mbig-endian')
             }
             $arguments.Add('-fms-extensions')
-            $arguments.Add("-I$compatInclude")
 
             foreach ($define in @($compatDefines) + @($ExtraDefine) + @($baseDefines) + @(Get-FileValues $file 'defines')) {
                 $arguments.Add("-D$define")
@@ -221,6 +220,9 @@ try {
             foreach ($include in $allIncludes | Select-Object -Unique) {
                 $arguments.Add("-I$include")
             }
+            # 兜底桩头必须排在 include 搜索路径的最后：放在最前会遮蔽 ArmCC 与
+            # clang 自带的 stdio.h / string.h 等，让桩里没声明的符号全部报未声明。
+            $arguments.Add("-I$compatInclude")
             $arguments.Add('-c')
             $arguments.Add($source)
 

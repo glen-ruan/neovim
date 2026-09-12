@@ -26,6 +26,11 @@ return {
             })
           end, { buffer = args.buf, desc = "LSP：查看符号说明" })
 
+          -- 原生 gra/grn/gri/grt 已可用，这里再给一个显式的代码操作入口。
+          vim.keymap.set({ "n", "v" }, "<leader>ca", function()
+            vim.lsp.buf.code_action()
+          end, { buffer = args.buf, desc = "LSP：代码操作" })
+
           local function show_signature_help()
             vim.lsp.buf.signature_help({
               border = "rounded",

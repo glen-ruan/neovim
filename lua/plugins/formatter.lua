@@ -27,6 +27,13 @@ return {
         tex = { "tex-fmt", "latexindent", stop_after_first = true },
       },
       notify_on_error = true,
+      -- latexindent 默认把 indent.log 和备份文件写进当前工作目录，
+      -- 这里显式指定 cruft 目录（-c），避免污染项目目录。
+      formatters = {
+        latexindent = {
+          args = { "-c=" .. vim.fn.stdpath("state"), "-" },
+        },
+      },
     },
   },
 }

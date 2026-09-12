@@ -28,6 +28,7 @@ require("lazy").setup({
     { import = "plugins.bufferline" },
     { import = "plugins.mason" },
     { import = "plugins.quarto" },
+    { import = "plugins.latex" },
     { import = "plugins.aerial" },
     { import = "plugins.colorizer" },
     { import = "plugins.formatter" },
@@ -41,7 +42,7 @@ require("lazy").setup({
     lazy = false,
     version = false,
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
+  install = { colorscheme = { "onedark", "habamax" } },
   checker = {
     -- 使用 :Lazy check / :Lazy update 手动检查，避免后台网络和扫描。
     enabled = false,
