@@ -86,4 +86,49 @@ run("安装 Treesitter 解析器 (TSInstallConfigured!)", function()
   vim.cmd("TSInstallConfigured!")
 end)
 
+run("检查可选依赖", function()
+  -- 可选依赖只提示、不中断引导：按需启用，缺了不影响其余功能。
+  local hints = {}
+
+  local latex = {}
+  for _, name in ipairs({ "latexmk", "xelatex" }) do
+    if vim.fn.executable(name) ~= 1 then
+      latex[#latex + 1] = name
+    end
+  end
+  if #latex > 0 then
+    hints[#hints + 1] = string.format(
+      "LaTeX 工具链缺少 %s；本配置固定使用 latexmk -xelatex，缺失时编译以退出码 127 失败。",
+      table.concat(latex, "、")
+    )
+    hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk"
+  elseif vim.fn.executable("kpsewhich") == 1 then
+    local absent = {}
+    for _, style in ipairs({ "ctex.sty", "xeCJK.sty" }) do
+      if vim.trim(vim.fn.system({ "kpsewhich", style })) == "" then
+        absent[#absent + 1] = style
+      end
+    end
+    if #absent > 0 then
+      hints[#hints + 1] = string.format("中文排版宏包缺失 %s", table.concat(absent, "、"))
+      hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install texlive-lang-chinese"
+    end
+  end
+
+  for _, name in ipairs({ "rg", "fd" }) do
+    if vim.fn.executable(name) ~= 1 then
+      hints[#hints + 1] = name .. " 缺失，搜索会更慢"
+    end
+  end
+
+  if #hints > 0 then
+    io.stderr:write("可选依赖提示（不影响引导完成）：\n")
+    for _, hint in ipairs(hints) do
+      io.stderr:write("  - " .. hint .. "\n")
+    end
+  else
+    print("  可选依赖均已就绪")
+  end
+end)
+
 print("bootstrap 完成。进入 Neovim 后可用 :checkhealth nvim_distribution 复查。")

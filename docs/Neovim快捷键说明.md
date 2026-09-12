@@ -216,6 +216,16 @@ uv add numpy requests
 
 ## 11. Markdown、QMD 和 LaTeX
 
+LaTeX 编译依赖系统安装的 TeX 工具链，它不由引导脚本或 Mason 安装。缺失时 `:checkhealth nvim_distribution` 会给出提示：
+
+```bash
+sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk
+```
+
+只装 `texlive-latex-extra` 和 `latexmk` **不够**：`xelatex` 由 `texlive-xetex` 提供，缺失时编译会以退出码 127 失败。排版中文文档还需要 `ctex` / `xeCJK`，它们在 `texlive-lang-chinese` 里。
+
+编译带 `-shell-escape`（见 `lua/plugins/latex.lua`，为了支持 minted 一类需要在编译期调用外部程序的宏包）。它会允许 `.tex` 里的宏包执行任意 shell 命令，**只编译自己信任的文档**。
+
 | 类型 | 操作 |
 |---|---|
 | Markdown 预览 | `:MarkdownPreview` |
@@ -264,3 +274,9 @@ uv add numpy requests
 | 查看当前 LSP | `:LspInfo` |
 
 首次安装或迁移机器时，运行仓库根目录的 `scripts/bootstrap.ps1`（Windows）或 `scripts/bootstrap.sh`（Linux/macOS）即可完成插件恢复、Mason 工具安装和 Treesitter parser 安装；判定逻辑在 `scripts/bootstrap.lua` 中，任一步失败都会以非零退出码结束，不会在工具缺失时谎报成功。
+
+关于插件状态的几个常见疑问：
+
+- **`Clean` 里的插件**表示「已安装但配置已不再引用」的残留，按 `X` 清理即可。`mason-lspconfig.nvim` 目前属于这种：配置改用 Neovim 原生 `vim.lsp.config` 后它就没人引用了。
+- **新增插件配置文件后，必须同时在 `lua/config/lazy.lua` 的 `import` 列表里登记**，否则文件不会被加载。`lua/plugins/cursor.lua` 正是这种待启用状态：内容整段被注释、也没有登记，要启用需两处一起改。
+- **`:Lazy update` 会改写 `lazy-lock.json`**，让配置仓库变脏，并与发行版锁定的插件版本分叉。想保持和发行版一致就不要按 `U`（Update）；确实要升级就按 `U`，然后把 `lazy-lock.json` 的改动提交掉。

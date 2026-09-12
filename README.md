@@ -54,7 +54,20 @@ stylua.toml                      Lua 格式化配置
 - Git、curl、tar
 - Node.js 和 Python
 - `tree-sitter-cli` 0.26.1+ 和可用的 C 编译器
+  - 安装：`npm install -g tree-sitter-cli`
+  - 只在编译 Treesitter parser 时需要（`:TSInstallConfigured!`）；已经编译好的 parser 不依赖它，所以缺了它日常编辑没有明显症状
+  - 用 nvm 管理 Node 时，`npm install -g` 会装到当前 Node 版本下，切换 Node 版本后需要重新安装
 - 按实际工程安装 IAR 或 Keil 工具链
+
+以下依赖是可选的，缺失只会让对应功能不可用，不影响其余编辑工作。引导脚本和 `:checkhealth nvim_distribution` 都会提示缺失项：
+
+- **LaTeX**：`latexmk` 和 `xelatex` 引擎。本配置固定使用 `latexmk -xelatex`（fontspec 需要 XeLaTeX），排版中文文档还需要 `ctex` / `xeCJK`
+  - Ubuntu：`sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk`
+  - 只装 `texlive-latex-extra` 和 `latexmk` **不够**：`xelatex` 由 `texlive-xetex` 提供，缺失时编译会以退出码 127 失败
+  - `latexindent`（`texlive-extra-utils`）只作为 `tex-fmt` 的格式化回退，`tex-fmt` 本身由 Mason 安装
+- **搜索加速**：`rg`、`fd`
+  - Ubuntu 上 `fd` 的包名是 `fd-find`，但可执行文件叫 `fdfind`，直接装完检查仍会报缺失，需要自己建软链：
+    `sudo apt install fd-find && ln -s "$(command -v fdfind)" ~/.local/bin/fd`
 
 ## 本机配置
 
