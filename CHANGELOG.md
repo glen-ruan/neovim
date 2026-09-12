@@ -11,6 +11,7 @@
 - Add tool directories to `PATH` even before Mason creates them.
 - Put the clangd compatibility headers last so they no longer shadow toolchain headers.
 - Disable the lazy bytecode cache on Windows only, where the cache lives under `%TEMP%`.
+- Cover `scripts/` in the CI Lua syntax check, so the bootstrap script is verified on every push.
 
 ## 1.0.3 - 2026-09-09
 
