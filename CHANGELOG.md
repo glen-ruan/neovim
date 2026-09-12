@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.5 - 2026-09-12
+
+- Check the LaTeX toolchain (`latexmk`, `xelatex`) and the Chinese typesetting packages (`ctex` / `xeCJK`) in `:checkhealth nvim_distribution`, with the install command in the advice.
+- Verify the `tree-sitter` CLI version (0.26.1+) instead of only its presence, since a missing or outdated CLI stays invisible until `:TSInstallConfigured!` fails.
+- List missing optional dependencies at the end of the bootstrap without turning them into a failure.
+- Document how to install the optional LaTeX toolchain, `tree-sitter-cli` (with the nvm caveat) and `fd` (renamed to `fdfind` on Debian/Ubuntu).
+- Document that LaTeX compilation runs with `-shell-escape`, so only trusted documents should be compiled.
+- Explain Lazy's `Clean` list, the `import` requirement for new plugin specs, and that `:Lazy update` rewrites `lazy-lock.json`.
+
 ## 1.0.4 - 2026-09-12
 
 - Enable the LaTeX toolchain (VimTeX + tex-fmt) and keep latexindent's log and backups out of the working directory.
