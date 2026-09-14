@@ -12,6 +12,12 @@ return {
   -- use a release tag to download pre-built binaries
   version = "1.*",
   opts = {
+    -- markdown / quarto（.md / .qmd）里没有值得补全的正文内容，整体关闭：
+    -- 关闭后 blink 的键位映射也不生效，<Tab> 回到普通的缩进行为。
+    enabled = function()
+      return not vim.tbl_contains({ "markdown", "quarto" }, vim.bo.filetype)
+    end,
+
     keymap = {
       preset = "none",
 
