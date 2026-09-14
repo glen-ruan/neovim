@@ -3,7 +3,13 @@ return {
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {},
+    opts = {
+      -- 右侧显示当前配置版本（读仓库根目录的 VERSION，结果缓存，无额外开销）；
+      -- 其余默认段保持不变。
+      sections = {
+        lualine_x = { "encoding", "fileformat", "filetype", { require("nvim_distribution.version").label } },
+      },
+    },
   },
 
   -- 语法高亮 & Treesitter
