@@ -1,3 +1,17 @@
+-- 光标是否位于 fenced code block（``` ... ```）内部：
+-- .qmd 的正文保持安静，只有代码块里才自动弹补全。
+local function in_code_fence()
+  local ok, node = pcall(vim.treesitter.get_node)
+  while ok and node do
+    local kind = node:type()
+    if kind == "fenced_code_block" or kind == "code_fence_content" or kind == "code_fence_span" then
+      return true
+    end
+    node = node:parent()
+  end
+  return false
+end
+
 return {
   "saghen/blink.cmp",
   event = "InsertEnter",
@@ -12,10 +26,11 @@ return {
   -- use a release tag to download pre-built binaries
   version = "1.*",
   opts = {
-    -- markdown / quarto（.md / .qmd）里没有值得补全的正文内容，整体关闭：
+    -- markdown (.md) 里没有值得补全的正文内容，整体关闭：
     -- 关闭后 blink 的键位映射也不生效，<Tab> 回到普通的缩进行为。
+    -- quarto (.qmd) 保持启用，以便代码块内的补全可用（弹窗策略见下面的 auto_show）。
     enabled = function()
-      return not vim.tbl_contains({ "markdown", "quarto" }, vim.bo.filetype)
+      return vim.bo.filetype ~= "markdown"
     end,
 
     keymap = {
@@ -73,7 +88,11 @@ return {
         },
       },
       menu = {
-        auto_show = true,
+        -- .qmd 正文里不自动弹窗，只在围栏代码块内自动补全；
+        -- 任何位置都可以用 <C-space> 手动触发。markdown 已整体关闭，这里也返回 false。
+        auto_show = function()
+          return vim.bo.filetype ~= "markdown" and (vim.bo.filetype ~= "quarto" or in_code_fence())
+        end,
         scrollbar = false,
         border = "rounded",
         winhighlight = "Normal:BlinkCmpMenu,FloatBorder:FloatBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
