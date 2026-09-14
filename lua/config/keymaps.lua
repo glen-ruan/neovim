@@ -37,6 +37,11 @@ map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "关闭当前文件" })
 -- 终端里的单次 Esc 与 <C-w>（删除前一个词）保持可用。
 map("t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
 
+-- 文本选择与跳转（放在 <leader> 前缀下，避免占用 v 之后紧跟 c/l/v 的原生序列）
+map("n", "<leader>vv", "v%", { desc = "选中到配对括号" })
+map("n", "<leader>vc", "viw", { desc = "选中当前词" })
+map("n", "<leader>vl", "V", { desc = "选中当前行" })
+
 -- 清除查找高亮
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 
