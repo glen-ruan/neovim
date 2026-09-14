@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7 - 2026-09-14
+
+- Disable completion in `markdown` buffers. Prose has nothing worth completing, and turning the plugin off for the filetype also returns `<Tab>` to plain indentation.
+- In `quarto` buffers, keep completion but auto-show the menu only inside fenced code blocks (detected with Treesitter). Prose stays quiet while code chunks keep completing, and `<C-space>` still triggers completion manually anywhere.
+
 ## 1.0.6 - 2026-09-12
 
 - Treat `ripgrep` as a required dependency instead of optional search acceleration: `Snacks.picker.grep()` hardcodes `rg` with no fallback, so a missing one breaks the `空格 f g` keymap.
