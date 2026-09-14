@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.8 - 2026-09-14
+
+- Show the configuration version in the statusline and add `:ConfigVersion` (version, branch and commit), so it is obvious which release a machine is running.
+- Add `:ConfigChangelog` to read the changelog in a floating window (`q` or `<Esc>` closes it).
+- Restore the word / line / bracket selection shortcuts as `<leader>vc`, `<leader>vl` and `<leader>vv`, which leaves `v` followed by `c`, `l` or `v` free for the native commands.
+- Document the new commands and selection shortcuts in the shortcut guide.
+
 ## 1.0.7 - 2026-09-14
 
 - Disable completion in `markdown` buffers. Prose has nothing worth completing, and turning the plugin off for the filetype also returns `<Tab>` to plain indentation.

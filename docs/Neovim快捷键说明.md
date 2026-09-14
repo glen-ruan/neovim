@@ -59,6 +59,14 @@ nvim .
 
 `空格 b d` 会保护未保存内容：文件有修改时不会直接关闭，需要先保存或明确使用 `:bd!`。
 
+文本选择（`空格 v` 前缀，不占用 `v` 开头的原生操作）：
+
+| 操作 | 快捷键 |
+|---|---|
+| 选中当前词 | `空格 v c` |
+| 选中当前行 | `空格 v l` |
+| 选中到配对括号 | `空格 v v` |
+
 ## 4. Buffer 切换
 
 | 操作 | 快捷键 |
@@ -272,6 +280,8 @@ sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk
 | 安装配置中的 Treesitter parser | `:TSInstallConfigured` |
 | 检查格式化工具 | `:ConformInfo` |
 | 查看当前 LSP | `:LspInfo` |
+| 查看当前配置版本、分支与提交 | `:ConfigVersion` |
+| 在浮窗里查看变更日志 | `:ConfigChangelog`（`q` 或 `Esc` 关闭） |
 
 首次安装或迁移机器时，运行仓库根目录的 `scripts/bootstrap.ps1`（Windows）或 `scripts/bootstrap.sh`（Linux/macOS）即可完成插件恢复、Mason 工具安装和 Treesitter parser 安装；判定逻辑在 `scripts/bootstrap.lua` 中，任一步失败都会以非零退出码结束，不会在工具缺失时谎报成功。
 
