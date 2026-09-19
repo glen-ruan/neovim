@@ -105,6 +105,16 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 | 打开指定仓库 | `:Octo repo view owner/name` |
 | 打开 GitHub URL | `:Octo <GitHub URL>` |
 
+搜索结果窗口内（仓库搜索、代码搜索）：
+
+| 操作 | 快捷键 |
+|---|---|
+| 复制所选结果的 URL | `Ctrl-y` |
+| 复制所选代码结果的提交引用 | `Ctrl-e` |
+| 在浏览器中打开所选结果 | `Ctrl-b` |
+
+未选中任何结果时按 `Ctrl-y` / `Ctrl-e` 复制光标所在那一项；`Ctrl-a` 可全选，选中多项时按行复制。注意 `Ctrl-a` 之后 picker 会刷新列表，紧接着的第一次按键会被吞掉一次，再按一次即可（`Tab` / `Shift-Tab` 在本配置里是上下移动，不参与多选）。
+
 仓库搜索支持 GitHub 搜索限定词，例如 `language:lua stars:>1000`。代码搜索同样支持 `repo:`、`language:`、`path:` 等限定词；选择结果后会在只读 Buffer 中打开完整远程文件。
 
 在 Octo Buffer 中按 `Enter` 可查看可用操作，按 `q` 或 `空格 q` 可安全返回普通编辑 Buffer。安全退出会保留 Neo-tree；如果没有可返回的文件，则创建一个空编辑 Buffer，而不是退出 Neovim。

@@ -143,6 +143,64 @@ local code_items = github._code_items({
 if #code_items ~= 1 or code_items[1].reference ~= "1234567890abcdef" then
   fail("GitHub code results were not converted for the Snacks picker")
 end
+if code_items[1].url ~= "https://github.com/neovim/neovim/blob/1234567890abcdef/runtime/plugin/man.lua" then
+  fail("GitHub code results did not keep the result URL")
+end
+
+local collected_urls = github._item_urls({
+  { url = "https://github.com/neovim/neovim" },
+  { repo = "neovim/neovim" },
+  { url = "https://github.com/folke/snacks.nvim" },
+})
+if #collected_urls ~= 2 or collected_urls[1] ~= "https://github.com/neovim/neovim" then
+  fail("GitHub URL collection did not skip results without a URL")
+end
+
+local view_actions = github._view_actions()
+local view_keys = github._view_keys()
+for lhs, name in pairs({ ["<C-y>"] = "copy_url", ["<C-e>"] = "copy_reference", ["<C-b>"] = "open_in_browser" }) do
+  if type(view_keys[lhs]) ~= "table" or view_keys[lhs][1] ~= name then
+    fail("missing GitHub picker keymap: " .. lhs)
+  end
+  if type(view_actions[name]) ~= "table" or type(view_actions[name].action) ~= "function" then
+    fail("missing GitHub picker action: " .. name)
+  end
+end
+
+local single_picker = {
+  selected = function()
+    return {}
+  end,
+}
+vim.fn.setreg('"', "")
+view_actions.copy_url.action(single_picker, { url = "https://github.com/neovim/neovim" }, { reg = '"' })
+if vim.fn.getreg('"') ~= "https://github.com/neovim/neovim" then
+  fail("GitHub copy_url did not copy the result URL")
+end
+
+local multi_picker = {
+  selected = function()
+    return { { url = "https://github.com/a/b" }, { url = "https://github.com/c/d" } }
+  end,
+}
+vim.fn.setreg('"', "")
+view_actions.copy_url.action(multi_picker, nil, { reg = '"' })
+local copied = vim.split(vim.fn.getreg('"'), "\n", { plain = true })
+if copied[1] ~= "https://github.com/a/b" or copied[2] ~= "https://github.com/c/d" then
+  fail("GitHub copy_url did not copy every selected result")
+end
+
+vim.fn.setreg('"', "")
+view_actions.copy_reference.action(single_picker, { reference = "1234567890ab" }, { reg = '"' })
+if vim.fn.getreg('"') ~= "1234567890ab" then
+  fail("GitHub copy_reference did not copy the commit reference")
+end
+
+vim.fn.setreg('"', "")
+view_actions.copy_url.action(single_picker, { repo = "neovim/neovim" }, { reg = '"' })
+if vim.fn.getreg('"') ~= "" then
+  fail("GitHub copy_url copied a result that has no URL")
+end
 
 local normal_buffer = vim.api.nvim_create_buf(true, false)
 local octo_buffer = vim.api.nvim_create_buf(true, false)

@@ -140,6 +140,100 @@ local function open_repository(item)
   vim.api.nvim_cmd({ cmd = "Octo", args = { "repo", "view", item.repo } }, {})
 end
 
+--- URLs of the given items, in order, skipping entries that have none.
+local function item_urls(items)
+  local urls = {}
+  for _, item in ipairs(items or {}) do
+    if type(item.url) == "string" and item.url ~= "" then
+      urls[#urls + 1] = item.url
+    end
+  end
+  return urls
+end
+
+--- Items selected in the picker, or the item under the cursor when none is selected.
+local function picker_items(picker, item)
+  if picker then
+    local selected = picker:selected()
+    if #selected > 0 then
+      return selected
+    end
+  end
+  return item and { item } or {}
+end
+
+local function picker_register(action)
+  local register = action and action.reg
+  if type(register) == "string" and register ~= "" then
+    return register
+  end
+  if type(vim.v.register) == "string" and vim.v.register ~= "" then
+    return vim.v.register
+  end
+  return "+"
+end
+
+local function copy_values(values, register, label)
+  if #values == 0 then
+    notify("Nothing to copy from this view", vim.log.levels.WARN)
+    return false
+  end
+
+  -- Linewise so that several values paste as separate lines.
+  local ok, err = pcall(vim.fn.setreg, register, table.concat(values, "\n"), #values > 1 and "l" or "c")
+  if not ok then
+    notify(tostring(err), vim.log.levels.ERROR)
+    return false
+  end
+
+  notify(string.format("Copied %d %s to the %s register", #values, label, register))
+  return true
+end
+
+local function copy_url(picker, item, action)
+  local urls = item_urls(picker_items(picker, item))
+  copy_values(urls, picker_register(action), #urls > 1 and "URLs" or "URL")
+end
+
+local function copy_reference(picker, item, action)
+  local references = {}
+  for _, target in ipairs(picker_items(picker, item)) do
+    if type(target.reference) == "string" and target.reference ~= "" then
+      references[#references + 1] = target.reference
+    end
+  end
+  copy_values(references, picker_register(action), #references > 1 and "commit references" or "commit reference")
+end
+
+local function open_in_browser(_picker, item)
+  if not item or type(item.url) ~= "string" or item.url == "" then
+    notify("This result has no URL to open", vim.log.levels.WARN)
+    return
+  end
+
+  local _, err = vim.ui.open(item.url)
+  if err then
+    notify(err, vim.log.levels.ERROR)
+  end
+end
+
+--- Actions shared by the GitHub pickers, mirroring the keys Octo uses in its own pickers.
+local function view_actions()
+  return {
+    copy_url = { action = copy_url, desc = "Copy the URL to the system clipboard" },
+    copy_reference = { action = copy_reference, desc = "Copy the commit reference to the system clipboard" },
+    open_in_browser = { action = open_in_browser, desc = "Open the URL in the default browser" },
+  }
+end
+
+local function view_keys()
+  return {
+    ["<C-y>"] = { "copy_url", mode = { "n", "i" } },
+    ["<C-e>"] = { "copy_reference", mode = { "n", "i" } },
+    ["<C-b>"] = { "open_in_browser", mode = { "n", "i" } },
+  }
+end
+
 function M.search_repositories()
   prompt("Search GitHub repositories: ", function(query)
     run_gh({
@@ -161,6 +255,8 @@ function M.search_repositories()
       Snacks.picker({
         title = "GitHub repositories",
         items = items,
+        actions = view_actions(),
+        win = { input = { keys = view_keys() } },
         format = function(item)
           return {
             { item.repo, "SnacksPickerLabel" },
@@ -196,6 +292,7 @@ local function code_items(response)
       repo = repository,
       path = result.path,
       reference = reference,
+      url = result.html_url,
       fragments = fragments,
       preview = {
         ft = vim.filetype.match({ filename = result.path or "" }) or "text",
@@ -299,6 +396,8 @@ function M.search_code()
       Snacks.picker({
         title = "GitHub code",
         items = items,
+        actions = view_actions(),
+        win = { input = { keys = view_keys() } },
         format = function(item)
           return {
             { item.repo, "SnacksPickerLabel" },
@@ -326,5 +425,8 @@ end
 
 M._repository_items = repository_items
 M._code_items = code_items
+M._item_urls = item_urls
+M._view_actions = view_actions
+M._view_keys = view_keys
 
 return M
