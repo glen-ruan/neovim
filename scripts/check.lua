@@ -5,15 +5,21 @@ local function fail(message)
   table.insert(failures, message)
 end
 
--- 同时检查 lua/ 和 scripts/：引导脚本不在 lua/ 下，不覆盖就只能等到运行时才暴露语法错误。
-for _, dir in ipairs({ "lua", "scripts" }) do
-  for path, type_ in vim.fs.dir(vim.fs.joinpath(root, dir), { depth = 20 }) do
-    if type_ == "file" and path:sub(-4) == ".lua" then
-      local file = vim.fs.joinpath(root, dir, path)
-      local chunk, error_message = loadfile(file)
-      if not chunk then
-        fail(file .. ": " .. error_message)
-      end
+local tracked_result = vim.system({ "git", "-C", root, "ls-files", "-z" }, { text = false }):wait()
+local tracked_files = {}
+if tracked_result.code ~= 0 then
+  fail("Unable to list tracked repository files: " .. (tracked_result.stderr or "unknown git error"))
+else
+  tracked_files = vim.split(tracked_result.stdout or "", "\0", { plain = true, trimempty = true })
+end
+
+-- 只检查已跟踪的 Lua 文件；local.lua、日志和 Git worktree 元数据不属于发布内容。
+for _, path in ipairs(tracked_files) do
+  if path:sub(-4) == ".lua" and (path:match("^lua/") or path:match("^scripts/")) then
+    local file = vim.fs.joinpath(root, path)
+    local chunk, error_message = loadfile(file)
+    if not chunk then
+      fail(file .. ": " .. error_message)
     end
   end
 end
@@ -43,8 +49,8 @@ if not ok or type(example) ~= "table" or type(example.tools) ~= "table" then
   fail("local.example.lua must return a table containing a tools table")
 end
 
-for path, type_ in vim.fs.dir(root, { depth = 20 }) do
-  if type_ == "file" and path ~= ".git" and not path:match("%.log$") and path ~= "lazy-lock.json" then
+for _, path in ipairs(tracked_files) do
+  if path ~= "lazy-lock.json" then
     local file = vim.fs.joinpath(root, path)
     local content = table.concat(vim.fn.readfile(file), "\n")
     local drive_at_start = "^" .. "%a:" .. "[/\\]"
