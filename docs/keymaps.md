@@ -126,22 +126,6 @@ Octo 官方只为 Issue、PR、Discussion 和 CI 运行提供了复制 URL 的�
 
 仓库搜索支持 GitHub 搜索限定词，例如 `language:lua stars:>1000`。代码搜索同样支持 `repo:`、`language:`、`path:` 等限定词；选择结果后会在只读 Buffer 中打开完整远程文件。
 
-## AI
-
-以下功能由 CodeCompanion 提供，按键在 `空格 a` 前缀下，对话默认显示在浮动窗口里。适配器与 agent **按 PATH 上实际存在的命令自动识别**：装了哪个就用哪个，没装的不会出现在候选里（清单见 `docs/dependencies.md`）。
-
-| 操作 | 快捷键 |
-|---|---|
-| 开关 AI 对话窗口（浮动） | `空格 a c` |
-| 新建对话 | `空格 a n` |
-| 动作面板（切换适配器、模型、工具） | `空格 a a` |
-| 行内改写（可视模式选中代码后可用） | `空格 a i` |
-| 在终端窗口里运行 agent CLI | `空格 a t`（弹出已安装的 agent 列表） |
-
-- 对话优先使用 `opencode`：它自带 ACP 支持，装好并配置过即可使用，不需要额外令牌；装上 `codex-acp` 或 `claude-agent-acp` 桥接后，Codex 与 Claude Code 会自动出现在可选适配器里。
-- `空格 a t` 列出的是 PATH 上的 `opencode`、`codex`、`claude`、`copilot`，选中后在各自的交互界面里工作，窗口沿用浮动布局；`:CodeCompanionCLI agent=<名字>` 可直接指定。
-- 对话 buffer 里可以用 `:CodeCompanionChat adapter=<名字>` 临时换适配器；`:checkhealth codecompanion` 检查适配器与依赖状态。
-
 在 Octo Buffer 中按 `Enter` 可查看可用操作，按 `q` 或 `空格 q` 可安全返回普通编辑 Buffer。安全退出会保留 Neo-tree；如果没有可返回的文件，则创建一个空编辑 Buffer，而不是退出 Neovim。
 
 ## 调试

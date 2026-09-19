@@ -98,11 +98,6 @@ for _, lhs in ipairs({
   "<leader>ghl",
   "<leader>ghn",
   "<leader>ghs",
-  "<leader>ac",
-  "<leader>an",
-  "<leader>aa",
-  "<leader>ai",
-  "<leader>at",
   "<leader>o",
   "<leader>rn",
   "<leader>gv",
@@ -238,32 +233,6 @@ if kept_mapping.desc ~= "upstream copy_url" then
   fail("Octo buffers that already map <C-y> were overridden")
 end
 vim.api.nvim_buf_delete(octo_buffer_with_mapping, { force = true })
-
-require("lazy").load({ plugins = { "codecompanion.nvim" } })
-local codecompanion_ok, codecompanion = pcall(require, "codecompanion.config")
-if not codecompanion_ok or type(codecompanion.interactions) ~= "table" then
-  fail("CodeCompanion did not load")
-else
-  local agents = codecompanion.interactions.cli.agents
-  if type(agents) ~= "table" then
-    fail("CodeCompanion did not configure any CLI agent")
-  end
-
-  for command, name in pairs({ opencode = "opencode", claude = "claude_code", codex = "codex" }) do
-    if vim.fn.executable(command) == 1 and agents[name] == nil then
-      fail("CodeCompanion did not detect the installed agent CLI: " .. command)
-    end
-  end
-
-  if vim.fn.executable("opencode") == 1 and codecompanion.interactions.chat.adapter ~= "opencode" then
-    fail("CodeCompanion did not select the detected opencode adapter")
-  end
-
-  local chat_window = codecompanion.display and codecompanion.display.chat and codecompanion.display.chat.window
-  if type(chat_window) ~= "table" or chat_window.layout ~= "float" then
-    fail("CodeCompanion chat window is not configured as a float")
-  end
-end
 
 local normal_buffer = vim.api.nvim_create_buf(true, false)
 local octo_buffer = vim.api.nvim_create_buf(true, false)
