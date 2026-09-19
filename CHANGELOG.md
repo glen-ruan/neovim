@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.1 - 2026-09-19
 
 - Copy the URL of a GitHub repository or release view with `<C-y>`, which Octo maps for issues, pull requests, discussions, and workflow runs only.
 
