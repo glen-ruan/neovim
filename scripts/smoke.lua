@@ -26,7 +26,7 @@ for _, plugin in ipairs({ "folke/snacks.nvim", "stevearc/aerial.nvim", "smjonas/
   assert(type(spec.keys) == "table" and #spec.keys > 0, "plugin keymaps were dropped: " .. plugin)
 end
 
-for _, command in ipairs({ "ConfigVersion", "ConfigChangelog", "LspAvailability", "Hv" }) do
+for _, command in ipairs({ "ConfigVersion", "ConfigChangelog", "LspAvailability", "LspInfo", "Hv" }) do
   assert(vim.fn.exists(":" .. command) == 2, "missing startup command: " .. command)
 end
 

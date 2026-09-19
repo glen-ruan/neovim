@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Restore `:LspInfo` on Neovim 0.12 as a compatibility alias for the native `:checkhealth vim.lsp` report.
 - Preserve complete single-plugin specs when aggregating plugin modules, including Snacks, Aerial, rename, completion, diagnostics, writing, and scrolling configuration.
 - Restrict the manual horizontal and vertical split mappings to normal editor buffers, preventing accidental splits from file trees and other utility windows.
 - Move runtime code into the `nvim_config` namespace with separate core, feature, integration, and plugin-spec modules.

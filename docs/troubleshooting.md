@@ -4,12 +4,15 @@
 
 ```vim
 :checkhealth nvim_config
+:checkhealth vim.lsp
 :LspAvailability
 :Lazy
 :Mason
 ```
 
 先处理 `nvim_config` 报告的基础依赖错误，再检查具体插件。
+
+在 Neovim 0.12 中，`:LspInfo` 是本配置提供的兼容别名，等同于 `:checkhealth vim.lsp`。它显示已经启用的配置以及当前 Buffer 实际连接的客户端；`:LspAvailability` 只检查服务器程序是否存在。
 
 ## 按下 `:` 后无法输入
 
