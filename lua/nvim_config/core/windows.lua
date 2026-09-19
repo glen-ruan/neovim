@@ -7,11 +7,21 @@ end
 
 function M.split(command)
   if not M.is_editor_buffer() then
-    vim.notify("只能在普通编辑窗口中创建分屏", vim.log.levels.WARN, { title = "Window" })
+    vim.notify("Splits can only be created from a regular editor buffer", vim.log.levels.WARN, { title = "Window" })
     return false
   end
 
   vim.cmd(command)
+  return true
+end
+
+function M.close()
+  if not M.is_editor_buffer() then
+    vim.notify("This quit mapping is only available in regular editor buffers", vim.log.levels.WARN, { title = "Window" })
+    return false
+  end
+
+  vim.cmd("quit")
   return true
 end
 

@@ -20,7 +20,12 @@ for _, spec in ipairs(captured.spec) do
     plugin_specs[spec[1]] = spec
   end
 end
-for _, plugin in ipairs({ "folke/snacks.nvim", "stevearc/aerial.nvim", "smjonas/inc-rename.nvim" }) do
+for _, plugin in ipairs({
+  "folke/snacks.nvim",
+  "pwntester/octo.nvim",
+  "stevearc/aerial.nvim",
+  "smjonas/inc-rename.nvim",
+}) do
   local spec = plugin_specs[plugin]
   assert(spec, "missing plugin specification: " .. plugin)
   assert(type(spec.keys) == "table" and #spec.keys > 0, "plugin keymaps were dropped: " .. plugin)
@@ -51,6 +56,8 @@ vim.api.nvim_set_current_buf(special)
 window_count = #vim.api.nvim_list_wins()
 assert(not windows.split("vsplit"), "utility buffers should reject manual splits")
 assert(#vim.api.nvim_list_wins() == window_count, "a utility-buffer split was created")
+assert(not windows.close(), "utility buffers should reject the editor-only quit action")
+assert(vim.api.nvim_get_current_buf() == special, "the editor-only quit action closed a utility buffer")
 vim.api.nvim_buf_delete(special, { force = true })
 
 local lsp_features = require("nvim_config.features.lsp")

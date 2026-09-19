@@ -31,13 +31,13 @@ end
 
 function M.setup()
   vim.api.nvim_create_user_command("LspAvailability", M.show_availability, {
-    desc = "显示语言服务器可用状态",
+    desc = "Show language server availability",
   })
 
   if vim.fn.exists(":LspInfo") == 0 then
     vim.api.nvim_create_user_command("LspInfo", function()
       vim.cmd("checkhealth vim.lsp")
-    end, { desc = "显示当前 Buffer 的 LSP 配置和客户端状态" })
+  end, { desc = "Show LSP configuration and clients for the current buffer" })
   end
 end
 

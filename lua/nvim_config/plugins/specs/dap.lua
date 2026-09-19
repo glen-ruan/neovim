@@ -47,7 +47,7 @@ return {
         require("dap-python").setup(adapter, { include_configs = false })
       end
 
-      -- Windows 下改用本地 TCP，避免退出调试时出现 stdio/SIGINT 警告。
+      -- Use local TCP on Windows to avoid stdio/SIGINT warnings on shutdown.
       if adapter and platform.is_windows then
         local python_adapter = dap.adapters.python
         dap.adapters.python = function(callback, config)
@@ -85,7 +85,7 @@ return {
           program = "${file}",
           cwd = "${workspaceFolder}",
           pythonPath = python,
-          -- 把 stdout/stderr 写入 DAP REPL，程序结束后仍可查看。
+      -- Keep stdout/stderr in the DAP REPL after the program exits.
           console = "internalConsole",
           justMyCode = true,
         },
@@ -121,7 +121,7 @@ return {
       local map = vim.keymap.set
       map("n", "<F5>", function()
         if not adapter then
-          vim.notify("未找到 debugpy；请执行 :MasonToolsInstall 或设置 DEBUGPY_PYTHON", vim.log.levels.ERROR)
+          vim.notify("debugpy was not found; run :MasonToolsInstall or set DEBUGPY_PYTHON", vim.log.levels.ERROR)
           return
         end
         if not dap.session() then
@@ -129,15 +129,15 @@ return {
           save_layout()
         end
         dap.continue()
-      end, { desc = "调试：启动/继续" })
-      map("n", "<F9>", dap.toggle_breakpoint, { desc = "调试：切换断点" })
-      map("n", "<F10>", dap.step_over, { desc = "调试：单步跳过" })
-      map("n", "<F11>", dap.step_into, { desc = "调试：单步进入" })
-      map("n", "<S-F11>", dap.step_out, { desc = "调试：跳出" })
+      end, { desc = "Debug: start/continue" })
+      map("n", "<F9>", dap.toggle_breakpoint, { desc = "Debug: toggle breakpoint" })
+      map("n", "<F10>", dap.step_over, { desc = "Debug: step over" })
+      map("n", "<F11>", dap.step_into, { desc = "Debug: step into" })
+      map("n", "<S-F11>", dap.step_out, { desc = "Debug: step out" })
       map("n", "<F6>", function()
         dap.terminate()
         restore_layout()
-      end, { desc = "调试：停止" })
+      end, { desc = "Debug: stop" })
       map("n", "<leader>du", function()
         if debug_ui_open then
           restore_layout()
@@ -146,31 +146,31 @@ return {
           ui.open()
           debug_ui_open = true
         end
-      end, { desc = "调试：切换面板并恢复布局" })
-      map({ "n", "v" }, "<leader>de", ui.eval, { desc = "调试：查看表达式" })
+      end, { desc = "Debug: toggle UI and restore layout" })
+      map({ "n", "v" }, "<leader>de", ui.eval, { desc = "Debug: evaluate expression" })
       map("n", "<leader>db", function()
         vim.ui.input({ prompt = "Breakpoint condition: " }, function(value)
           if value and value ~= "" then
             dap.set_breakpoint(value)
           end
         end)
-      end, { desc = "调试：条件断点" })
+      end, { desc = "Debug: conditional breakpoint" })
 
       vim.api.nvim_create_user_command("DebugPython", function(opts)
         local path = vim.fn.fnamemodify(vim.fn.expand(opts.args), ":p")
         if opts.args == "" then
           vim.g.debug_python = nil
-          vim.notify("Python：自动选择环境")
+          vim.notify("Python: environment selection is automatic")
         elseif vim.fn.executable(path) == 1 then
           vim.g.debug_python = path
           vim.notify("Python：" .. path)
         else
-          vim.notify("找不到 Python：" .. path, vim.log.levels.ERROR)
+          vim.notify("Python was not found: " .. path, vim.log.levels.ERROR)
         end
       end, {
         nargs = "?",
         complete = "file",
-        desc = "选择调试使用的 Python；无参数时恢复自动选择",
+        desc = "Select the Python debugger interpreter; omit the path to restore automatic selection",
       })
     end,
   },

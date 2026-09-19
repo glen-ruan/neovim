@@ -1,18 +1,17 @@
 return {
-  -- 状态栏
+  -- Statusline.
   {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
-      -- 右侧显示当前配置版本（读仓库根目录的 VERSION，结果缓存，无额外开销）；
-      -- 其余默认段保持不变。
+      -- Show the cached configuration version on the right.
       sections = {
         lualine_x = { "encoding", "fileformat", "filetype", { require("nvim_config.features.version").label } },
       },
     },
   },
 
-  -- 语法高亮 & Treesitter
+  -- Syntax highlighting and Treesitter.
   {
     "nvim-treesitter/nvim-treesitter",
     event = { "BufReadPre", "BufNewFile" },
@@ -49,16 +48,16 @@ return {
         local task = treesitter.install(languages)
         if opts.bang then
           task:wait(300000)
-          -- Task 不会因为解析器编译失败而抛错，必须重新核对已装列表。
+          -- The task may not raise when parser compilation fails, so verify the installed list.
           local installed = treesitter.get_installed() or {}
           local missing = vim.tbl_filter(function(lang)
             return not vim.list_contains(installed, lang)
           end, languages)
           if #missing > 0 then
-            error("Treesitter 解析器安装失败：" .. table.concat(missing, ", "))
+            error("Treesitter parser installation failed: " .. table.concat(missing, ", "))
           end
         end
-      end, { bang = true, desc = "安装本配置使用的 Treesitter 解析器；! 表示等待完成" })
+      end, { bang = true, desc = "Install configured Treesitter parsers; ! waits for completion" })
 
       vim.api.nvim_create_autocmd("FileType", {
         group = vim.api.nvim_create_augroup("UserTreesitterStart", { clear = true }),

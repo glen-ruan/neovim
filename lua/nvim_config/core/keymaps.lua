@@ -1,63 +1,62 @@
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
--- leader 键
-vim.g.mapleader = " " -- 空格为 leader
+-- Leader key.
+vim.g.mapleader = " "
 
--- 下一个 / 上一个 Tab
-map("n", "<leader><PageDown>", ":BufferLineCycleNext<CR>", opts) -- 下一个 Tab
-map("n", "<leader><PageUp>", ":BufferLineCyclePrev<CR>", opts) -- 上一个 Tab
+-- Next / previous buffer tab.
+map("n", "<leader><PageDown>", ":BufferLineCycleNext<CR>", opts)
+map("n", "<leader><PageUp>", ":BufferLineCyclePrev<CR>", opts)
 
--- 快速跳转到指定 Tab（1~9）
+-- Jump directly to buffer tabs 1-9.
 for i = 1, 9 do
   map("n", "<leader>" .. i, ":BufferLineGoToBuffer " .. i .. "<CR>", opts)
 end
 
--- 分屏操作
+-- Window operations.
 local windows = require("nvim_config.core.windows")
-map("n", "<leader><Left>", "<C-w>h", opts) -- 移动到左边窗口
-map("n", "<leader><Down>", "<C-w>j", opts) -- 移动到下边窗口
-map("n", "<leader><Up>", "<C-w>k", opts) -- 移动到上边窗口
-map("n", "<leader><Right>", "<C-w>l", opts) -- 移动到右边窗口
+map("n", "<leader><Left>", "<C-w>h", opts)
+map("n", "<leader><Down>", "<C-w>j", opts)
+map("n", "<leader><Up>", "<C-w>k", opts)
+map("n", "<leader><Right>", "<C-w>l", opts)
 map("n", "<leader>sv", function()
   windows.split("vsplit")
-end, { desc = "垂直分屏（仅编辑窗口）" })
+end, { desc = "Split vertically (editor buffers only)" })
 map("n", "<leader>sh", function()
   windows.split("split")
-end, { desc = "水平分屏（仅编辑窗口）" })
-map("n", "<leader>se", "<C-w>=", { desc = "平均分配窗口" })
-map("n", "<leader>sx", "<cmd>close<CR>", { desc = "关闭当前分屏" })
+end, { desc = "Split horizontally (editor buffers only)" })
+map("n", "<leader>se", "<C-w>=", { desc = "Equalize window sizes" })
+map("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" })
 
--- 文件操作
-map("n", "<leader>w", ":w<CR>", opts) -- 保存
-map("n", "<leader>q", ":q<CR>", opts) -- 关闭
-map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "关闭当前文件" })
+-- File operations.
+map("n", "<leader>w", ":w<CR>", opts)
+map("n", "<leader>q", windows.close, { desc = "Quit current window (editor buffers only)" })
+map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Close current file" })
 
--- 在终端模式中连按两次 Esc 退出到普通模式：
--- 终端里的单次 Esc 与 <C-w>（删除前一个词）保持可用。
+-- Press Esc twice to leave terminal mode. A single Esc remains available to terminal programs.
 map("t", "<Esc><Esc>", [[<C-\><C-n>]], opts)
 
--- 文本选择与跳转（放在 <leader> 前缀下，避免占用 v 之后紧跟 c/l/v 的原生序列）
-map("n", "<leader>vv", "v%", { desc = "选中到配对括号" })
-map("n", "<leader>vc", "viw", { desc = "选中当前词" })
-map("n", "<leader>vl", "V", { desc = "选中当前行" })
+-- Selection mappings use a leader prefix to preserve native v-prefixed motions.
+map("n", "<leader>vv", "v%", { desc = "Select through matching bracket" })
+map("n", "<leader>vc", "viw", { desc = "Select current word" })
+map("n", "<leader>vl", "V", { desc = "Select current line" })
 
--- 清除查找高亮
+-- Clear search highlights.
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 
--- 打开一个浮动终端
+-- Floating terminal.
 local float_term = require("nvim_config.features.terminal")
-map("n", "<leader>ft", float_term.toggle, { desc = "打开/关闭浮动终端" })
+map("n", "<leader>ft", float_term.toggle, { desc = "Toggle floating terminal" })
 
--- 打开诊断窗口
+-- Diagnostics.
 map("n", "<leader>xx", ":Trouble diagnostics toggle<CR>", opts)
 
 map("v", "<Tab>", ">gv", opts)
-map("v", "<S-Tab>", "<gv", opts) -- Shift+Tab 减少缩进并保持选区
+map("v", "<S-Tab>", "<gv", opts)
 
 map("n", "<leader>e", ":Neotree toggle<CR>", opts)
 
--- 设置显示 / 不显示 tab
+-- Toggle the buffer tab line.
 vim.keymap.set("n", "<leader>tb", function()
   if vim.o.showtabline == 0 then
     vim.o.showtabline = 2

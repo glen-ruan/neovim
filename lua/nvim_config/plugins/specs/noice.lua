@@ -1,14 +1,14 @@
 return {
   "folke/noice.nvim",
   dependencies = {
-    "MunifTanjim/nui.nvim", -- 必须
+      "MunifTanjim/nui.nvim",
   },
   config = function()
     require("noice").setup({
-      -- 命令行配置
+      -- Command line.
       cmdline = {
-        enabled = true, -- 启用 Noice 命令行
-        view = "cmdline_popup", -- 浮窗形式
+        enabled = true,
+        view = "cmdline_popup",
         format = {
           cmdline = { pattern = "^:", icon = "", lang = "vim" },
           search_down = { pattern = "^/", icon = "", lang = "regex" },
@@ -17,7 +17,7 @@ return {
         },
       },
 
-      -- LSP 配置
+      -- LSP integration.
       lsp = {
         override = {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
@@ -33,7 +33,7 @@ return {
         enabled = false,
       },
 
-      -- 预设
+      -- Presets.
       presets = {
         bottom_search = false,
         command_palette = false,

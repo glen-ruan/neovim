@@ -19,7 +19,7 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 | 操作 | 快捷键 |
 |---|---|
 | 保存 | `空格 w` |
-| 退出当前窗口 | `空格 q` |
+| 退出当前窗口（仅普通编辑窗口） | `空格 q` |
 | 删除当前 Buffer | `空格 b d` |
 | 下一个、上一个 Buffer | `空格 PageDown`、`空格 PageUp` |
 | 跳到第 1–9 个 Buffer | `空格 1` 至 `空格 9` |
@@ -30,7 +30,7 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 | 关闭当前分屏 | `空格 s x` |
 | 切换左、下、上、右窗口 | `空格` + 对应方向键 |
 
-创建分屏快捷键只在普通编辑 Buffer 中生效。在文件树、终端、帮助、health 和快速修复窗口中误按时不会创建分屏；插件自己的预览和跳转窗口不受影响。
+创建分屏和 `空格 q` 退出快捷键只在普通编辑 Buffer 中生效。在文件树、终端、帮助、health 和快速修复窗口中误按时不会创建分屏或关闭窗口；插件自己的预览、跳转与关闭操作不受影响。
 
 ## 查找与导航
 
@@ -87,6 +87,22 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 | 关闭 Diffview | `空格 g q` |
 | 当前文件历史 | `空格 g f` |
 | 仓库文件历史 | `空格 g l` |
+
+## GitHub
+
+以下功能由 Octo 提供，全部显示在 Neovim 内。需要安装并登录 GitHub CLI。
+
+| 操作 | 快捷键或命令 |
+|---|---|
+| 列出 GitHub 仓库 | `空格 g h r` |
+| 当前仓库的 Issues | `空格 g h i` |
+| 当前仓库的 Pull Requests | `空格 g h p` |
+| GitHub 通知 | `空格 g h n` |
+| 搜索 Issue、PR 与 Discussion | `空格 g h s` |
+| 打开指定仓库 | `:Octo repo view owner/name` |
+| 打开 GitHub URL | `:Octo <GitHub URL>` |
+
+在 Octo Buffer 中按 `Enter` 可查看可用操作。Octo 侧重仓库概览、Issue、PR、Discussion 和代码评审；要编辑完整源码，仍应先克隆仓库再用 Neovim 打开。
 
 ## 调试
 

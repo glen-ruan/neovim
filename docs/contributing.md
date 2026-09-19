@@ -7,6 +7,7 @@
 - 新增用户命令或快捷键时同步更新对应文档。
 - 新增外部依赖时同步更新 `lua/nvim_config/dependencies.lua`、health、bootstrap 和依赖文档。
 - 插件升级必须提交 `lazy-lock.json`。
+- 文档可以使用中文；代码、脚本和配置中的注释、通知、提示及错误信息必须使用英文。此规则由 `scripts/check.lua` 自动检查。
 
 ## 本地检查
 

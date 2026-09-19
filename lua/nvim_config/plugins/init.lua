@@ -28,14 +28,14 @@ lazy.setup({
   },
   install = { colorscheme = { "onedark", "habamax" } },
   checker = {
-    -- 使用 :Lazy check / :Lazy update 手动检查，避免后台网络和扫描。
+    -- Use :Lazy check / :Lazy update explicitly; avoid background network checks.
     enabled = false,
     notify = false,
   },
   rocks = { enabled = false },
   performance = {
-    -- Windows 的缓存目录在 %TEMP% 下，可能运行期被清理，导致 vim.loader 写入失败
-    -- 并卡住 noice.nvim 的命令行；Linux 的 ~/.cache 不受影响，保留缓存换启动速度。
+    -- Windows may clear %TEMP% while Neovim is running, which can break
+    -- vim.loader and Noice. Keep the cache enabled on Linux only.
     cache = { enabled = not platform.is_windows },
     rtp = {
       disabled_plugins = {

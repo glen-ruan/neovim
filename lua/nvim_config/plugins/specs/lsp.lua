@@ -13,22 +13,22 @@ return {
       local platform = require("nvim_config.core.platform")
       local lsp_features = require("nvim_config.features.lsp")
 
-      -- 只强调当前参数文字，避免配色方案给签名窗口铺满背景色。
+      -- Highlight only the active parameter text, not the entire signature float.
       vim.api.nvim_set_hl(0, "LspSignatureActiveParameter", { bold = true, underline = true })
 
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
         callback = function(args)
-          vim.keymap.set("n", "K", lsp_features.hover, { buffer = args.buf, desc = "LSP：查看符号说明" })
+          vim.keymap.set("n", "K", lsp_features.hover, { buffer = args.buf, desc = "LSP: show symbol documentation" })
 
-          -- 原生 gra/grn/gri/grt 已可用，这里再给一个显式的代码操作入口。
+          -- Keep an explicit code-action entry alongside Neovim's native mappings.
           vim.keymap.set({ "n", "v" }, "<leader>ca", function()
             vim.lsp.buf.code_action()
-          end, { buffer = args.buf, desc = "LSP：代码操作" })
+          end, { buffer = args.buf, desc = "LSP: code action" })
 
           vim.keymap.set("i", "<C-s>", lsp_features.signature_help, {
             buffer = args.buf,
-            desc = "LSP：查看函数签名（原生快捷键）",
+            desc = "LSP: show function signature",
           })
         end,
       })
@@ -61,13 +61,13 @@ return {
           before_init = function(_, config)
             local python = platform.project_python(config.root_dir)
             if python then
-              -- Client 创建时已经引用了这张 settings 表，必须原地修改。
-              -- 替换整张表会导致 Pyright 继续使用创建客户端时的旧配置。
+          -- The client already references this settings table; mutate it in
+          -- place so Pyright receives the updated interpreter configuration.
               config.settings.python = config.settings.python or {}
               config.settings.python.pythonPath = python
             else
               vim.schedule(function()
-                vim.notify("当前工程没有可用的 .venv，Pyright 未绑定 Python 环境", vim.log.levels.WARN)
+            vim.notify("No project .venv is available; Pyright is not bound to a Python environment", vim.log.levels.WARN)
               end)
             end
           end,
@@ -126,7 +126,7 @@ return {
       end
       enable_available_servers()
 
-      -- Mason 在本次启动中完成安装后立即启用新语言服务器。
+      -- Enable language servers immediately when Mason installs them in this session.
       vim.api.nvim_create_autocmd("User", {
         group = vim.api.nvim_create_augroup("UserEnableMasonLsp", { clear = true }),
         pattern = "MasonToolsUpdateCompleted",

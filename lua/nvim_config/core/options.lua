@@ -10,31 +10,31 @@ vim.opt.mouse = "a"
 vim.opt.laststatus = 3
 vim.opt.clipboard = "unnamedplus"
 
--- 禁止自动注释续行
+-- Stop comments from continuing automatically.
 vim.opt.formatoptions:remove({ "c", "r", "o" })
 
-vim.opt.cursorline = true -- 开启光标行高亮（可以只高亮行号）
--- vim.opt.cursorlineopt = "number" -- 只高亮行号，而不是整行
+vim.opt.cursorline = true
+-- vim.opt.cursorlineopt = "number" -- Highlight only the line number.
 
--- 全局 LSP 诊断配置
+-- Global LSP diagnostic settings.
 vim.diagnostic.config({
   signs = true,
   underline = true,
-  virtual_text = false, -- 由 tiny-inline-diagnostic 负责行内提示
+  virtual_text = false, -- tiny-inline-diagnostic renders inline messages.
   update_in_insert = false,
 })
 
--- 创建 :Hv 命令，在垂直分屏中打开帮助
+-- Open help in a vertical split.
 vim.api.nvim_create_user_command("Hv", function(opts)
   vim.cmd("vertical help " .. (opts.args ~= "" and opts.args or ""))
 end, { nargs = "*", complete = "help" })
 
 vim.o.modeline = false
 
--- 添加 '-' 词语
+-- Treat hyphenated identifiers as one word.
 vim.opt.iskeyword:append("-")
 
--- 使得左右键可以跨行
+-- Allow horizontal movement to wrap across lines.
 vim.o.whichwrap = vim.o.whichwrap .. "<>,h,l"
 
 -- Make tools installed below Neovim's data directory visible on every platform.
@@ -50,8 +50,8 @@ table.insert(tool_paths, vim.fs.joinpath(data, "tools", "bin"))
 if platform.is_windows then
   table.insert(tool_paths, vim.fs.joinpath(data, "tools", "w64devkit", "bin"))
 end
--- must_exist = false：这些目录可能在本会话中才由 mason / uv 创建，
--- 若因为"暂时不存在"被跳过，本次启动就找不到刚装好的语言服务器。
+-- These directories may be created by Mason or uv later in this session, so
+-- include them even when they do not exist yet.
 platform.prepend_path(tool_paths, { must_exist = false })
 
 if platform.is_windows then
@@ -60,7 +60,7 @@ if platform.is_windows then
     vim.env.CC = gcc
   end
 
-  -- 保证 :!、插件构建和终端命令使用正确的 PowerShell 参数与 UTF-8 输出。
+  -- Keep shell commands, plugin builds, and terminals on UTF-8 PowerShell.
   local powershell = platform.find_executable("powershell", "NVIM_POWERSHELL", { "pwsh", "powershell" })
   if powershell then
     vim.opt.shell = powershell
@@ -72,8 +72,8 @@ if platform.is_windows then
   end
 end
 
--- 禁止加载 netrw 核心
+-- Optional netrw disable switches.
 -- vim.g.loaded_netrw = 1
 --
--- -- 禁止加载 netrw 的 plugin 层
+-- -- Disable the netrw plugin layer.
 -- vim.g.loaded_netrwPlugin = 1

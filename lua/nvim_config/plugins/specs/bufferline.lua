@@ -4,7 +4,7 @@ local function close_buffer(bufnr)
   end
 
   if vim.bo[bufnr].modified then
-    vim.notify("文件尚未保存，请先保存或使用 :bd! 强制关闭", vim.log.levels.WARN)
+    vim.notify("The file has unsaved changes; save it first or use :bd! to force close", vim.log.levels.WARN)
     return
   end
 

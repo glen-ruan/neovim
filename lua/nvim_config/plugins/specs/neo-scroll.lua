@@ -1,15 +1,15 @@
 return {
   "karb94/neoscroll.nvim",
-  event = "VeryLazy", -- 或 "BufReadPost"，按需触发
+  event = "VeryLazy",
   opts = {
-    -- 启用默认映射（可选）
+    -- Use the plugin's default mappings.
     mappings = { "<C-u>", "<C-d>" },
-    hide_cursor = true, -- 滚动时隐藏光标
-    stop_eof = true, -- 到达文件末尾时停止
+    hide_cursor = true, -- Hide the cursor while scrolling.
+    stop_eof = true, -- Stop at end of file.
     respect_scrolloff = false,
     cursor_scrolls_alone = true,
-    easing = "quadratic", -- 更自然的滚动效果
-    performance_mode = false, -- 如遇卡顿可设为 true
+    easing = "quadratic",
+    performance_mode = false, -- Enable if animations cause performance issues.
     pre_hook = nil,
     post_hook = nil,
   },

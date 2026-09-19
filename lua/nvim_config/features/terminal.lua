@@ -23,7 +23,7 @@ function M.toggle()
   return M.open()
 end
 
--- 打开或复用浮窗终端
+-- Open or reuse the floating terminal.
 function M.open()
   if M.term_buf and vim.api.nvim_buf_is_valid(M.term_buf) and M.term_chan then
     local status = vim.fn.jobwait({ M.term_chan }, 0)[1]
@@ -45,7 +45,7 @@ function M.open()
     if M.term_win and vim.api.nvim_win_is_valid(M.term_win) then
       vim.api.nvim_set_current_win(M.term_win)
     else
-      -- 重新创建窗口
+    -- Recreate the window.
       local width = math.floor(vim.o.columns * float_width)
       local height = math.floor(vim.o.lines * float_height)
       local row = math.floor((vim.o.lines - height) / 2)
@@ -64,7 +64,7 @@ function M.open()
     return M.term_chan
   end
 
-  -- 创建新的 buffer
+  -- Create a new buffer.
   M.term_buf = vim.api.nvim_create_buf(false, true)
 
   local width = math.floor(vim.o.columns * float_width)
@@ -118,13 +118,13 @@ function M.open()
   return M.term_chan
 end
 
--- 发送命令到浮窗终端
+-- Send a command to the floating terminal.
 function M.send(cmd)
   local chan = M.open()
   vim.fn.chansend(chan, cmd .. "\n")
 end
 
--- 清空浮窗终端
+-- Clear the floating terminal.
 function M.clear()
   local command = "clear"
   if M.term_shell_name == "pwsh.exe" or M.term_shell_name == "powershell.exe" then
@@ -135,5 +135,5 @@ function M.clear()
   M.send(command)
 end
 
--- 返回模块表
+-- Export the module.
 return M

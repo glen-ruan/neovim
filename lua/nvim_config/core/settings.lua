@@ -18,9 +18,9 @@ function M.setup()
 
   local ok, result = pcall(dofile, path)
   if not ok or type(result) ~= "table" then
-    local reason = ok and "文件必须返回一个 Lua table" or tostring(result)
+    local reason = ok and "the file must return a Lua table" or tostring(result)
     vim.schedule(function()
-      vim.notify("无法加载用户配置 " .. path .. ":\n" .. reason, vim.log.levels.ERROR)
+      vim.notify("Unable to load user configuration " .. path .. ":\n" .. reason, vim.log.levels.ERROR)
     end)
     return
   end

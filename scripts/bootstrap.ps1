@@ -8,8 +8,8 @@ $configRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Pat
 $initLua = Join-Path $configRoot 'init.lua'
 $bootstrap = Join-Path $configRoot 'scripts\bootstrap.lua'
 
-# -l 会跳过用户配置，所以必须同时用 -u 指定 init.lua；安装与校验都在
-# scripts/bootstrap.lua 里完成，只有 -l 模式才会因 Lua 错误返回非零退出码。
+# -l skips user configuration, so -u must load init.lua explicitly. Installation
+# and verification live in bootstrap.lua so Lua failures produce a nonzero exit code.
 nvim --headless -i NONE -u $initLua -l $bootstrap
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Bootstrap failed with exit code $LASTEXITCODE."

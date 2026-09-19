@@ -1,5 +1,5 @@
 return {
-  -- Git 集成
+  -- Git integration.
   {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
@@ -8,14 +8,14 @@ return {
     end,
   },
 
-  -- 自动括号匹配
+  -- Automatic bracket pairing.
   {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
     config = function()
       require("nvim-autopairs").setup({
-        check_ts = true, -- 启用 Treesitter 检测语言
-        enable_check_bracket_line = true, -- 同一行避免重复括号
+      check_ts = true, -- Use Treesitter-aware pairing.
+      enable_check_bracket_line = true, -- Avoid duplicate closing brackets on the same line.
       })
     end,
   },

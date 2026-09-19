@@ -1,21 +1,20 @@
--- 由 scripts/bootstrap.ps1 / scripts/bootstrap.sh 通过
+-- Invoked by scripts/bootstrap.ps1 / scripts/bootstrap.sh as:
 --   nvim --headless -i NONE -u <config>/init.lua -l <config>/scripts/bootstrap.lua
--- 调用。需要真实退出码：nvim 对 +cmd 里的错误仍返回 0，而 -l 模式在 Lua
--- 出错时退出码为 1，所以判定逻辑放在这里，而不是 shell 脚本里。
--- 注意 -l 会跳过用户配置，必须显式用 -u 指定 init.lua，否则 lazy 等插件都不存在。
+-- Errors in +cmd still return zero, while Lua errors in -l mode return one.
+-- The -l flag skips user configuration, so -u must explicitly load init.lua.
 
 ---@param step string
 ---@param fn fun()
 local function run(step, fn)
   local ok, err = pcall(fn)
   if not ok then
-    io.stderr:write(string.format("bootstrap 失败 [%s]：%s\n", step, tostring(err)))
-    error(string.format("bootstrap 终止于步骤「%s」", step), 0)
+    io.stderr:write(string.format("Bootstrap failed [%s]: %s\n", step, tostring(err)))
+    error(string.format("Bootstrap stopped at step: %s", step), 0)
   end
-  print(string.format("bootstrap 完成 [%s]", step))
+  print(string.format("Bootstrap completed [%s]", step))
 end
 
-run("前置检查", function()
+run("prerequisite check", function()
   local missing = {}
   local dependencies = require("nvim_config.dependencies")
   for _, group_name in ipairs({ "core", "search" }) do
@@ -29,7 +28,7 @@ run("前置检查", function()
     missing[#missing + 1] = "tree-sitter"
   end
   if #missing > 0 then
-    error("以下命令不在 PATH 中：" .. table.concat(missing, ", "))
+    error("The following commands are not available in PATH: " .. table.concat(missing, ", "))
   end
 
   local compiler
@@ -40,16 +39,16 @@ run("前置检查", function()
     end
   end
   if not compiler then
-    error("找不到 C 编译器（Treesitter 编译解析器需要）")
+    error("A C compiler is required to build Treesitter parsers")
   end
-  print("  C 编译器：" .. compiler)
+  print("  C compiler: " .. compiler)
 end)
 
-run("同步插件版本 (:Lazy! restore)", function()
+run("restore locked plugin versions (:Lazy! restore)", function()
   vim.cmd("Lazy! restore")
 end)
 
-run("校验插件目录", function()
+run("verify plugin directories", function()
   local missing = {}
   for name, plugin in pairs(require("lazy.core.config").plugins) do
     if plugin.url and plugin.dir and vim.fn.isdirectory(plugin.dir) ~= 1 then
@@ -58,16 +57,16 @@ run("校验插件目录", function()
   end
   if #missing > 0 then
     table.sort(missing)
-    error("以下插件未安装：" .. table.concat(missing, ", "))
+    error("The following plugins are not installed: " .. table.concat(missing, ", "))
   end
 end)
 
-run("安装 mason 工具 (MasonToolsInstallSync)", function()
+run("install Mason tools (MasonToolsInstallSync)", function()
   vim.cmd("MasonToolsInstallSync")
 end)
 
-run("校验 mason 工具", function()
-  -- ensure_installed 直接读插件规格文件，避免两处维护导致漏检。
+run("verify Mason tools", function()
+  -- Read ensure_installed from the plugin specification to keep one source of truth.
   local expected = {}
   local spec_path = vim.fs.joinpath(vim.fn.stdpath("config"), "lua", "nvim_config", "plugins", "specs", "mason.lua")
   for _, spec in ipairs(dofile(spec_path)) do
@@ -85,16 +84,16 @@ run("校验 mason 工具", function()
     end
   end
   if #missing > 0 then
-    error("以下工具未安装：" .. table.concat(missing, ", "))
+    error("The following tools are not installed: " .. table.concat(missing, ", "))
   end
 end)
 
-run("安装 Treesitter 解析器 (TSInstallConfigured!)", function()
+run("install Treesitter parsers (TSInstallConfigured!)", function()
   vim.cmd("TSInstallConfigured!")
 end)
 
-run("检查可选依赖", function()
-  -- 可选依赖只提示、不中断引导：按需启用，缺了不影响其余功能。
+run("check optional dependencies", function()
+  -- Optional dependencies produce hints without stopping bootstrap.
   local hints = {}
 
   local latex = {}
@@ -105,11 +104,11 @@ run("检查可选依赖", function()
   end
   if #latex > 0 then
     hints[#hints + 1] = string.format(
-      "LaTeX 工具链缺少 %s；本配置固定使用 latexmk -xelatex，缺失时编译以退出码 127 失败。",
+      "LaTeX toolchain is missing %s; this configuration uses latexmk -xelatex and compilation will fail with exit code 127.",
       table.concat(latex, "、")
     )
     hints[#hints + 1] =
-      "  Ubuntu 可执行：sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk"
+      "  Ubuntu: sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk"
   elseif vim.fn.executable("kpsewhich") == 1 then
     local absent = {}
     for _, style in ipairs({ "ctex.sty", "xeCJK.sty" }) do
@@ -118,23 +117,23 @@ run("检查可选依赖", function()
       end
     end
     if #absent > 0 then
-      hints[#hints + 1] = string.format("中文排版宏包缺失 %s", table.concat(absent, "、"))
-      hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install texlive-lang-chinese"
+      hints[#hints + 1] = string.format("Chinese typesetting packages are missing: %s", table.concat(absent, ", "))
+      hints[#hints + 1] = "  Ubuntu: sudo apt install texlive-lang-chinese"
     end
   end
 
   if vim.fn.executable("fd") ~= 1 then
-    hints[#hints + 1] = "fd 缺失，文件与项目搜索会退回更慢的实现"
+    hints[#hints + 1] = "fd is missing; file and project search will use a slower fallback"
   end
 
   if #hints > 0 then
-    io.stderr:write("可选依赖提示（不影响引导完成）：\n")
+    io.stderr:write("Optional dependency hints (bootstrap can still complete):\n")
     for _, hint in ipairs(hints) do
       io.stderr:write("  - " .. hint .. "\n")
     end
   else
-    print("  可选依赖均已就绪")
+    print("  Optional dependencies are ready")
   end
 end)
 
-print("bootstrap 完成。进入 Neovim 后可用 :checkhealth nvim_config 复查。")
+print("Bootstrap completed. Run :checkhealth nvim_config inside Neovim to verify the installation.")

@@ -32,7 +32,7 @@ function M.find_executable(setting_name, environment_name, candidates)
 end
 
 ---@param paths string[]
----@param opts? { must_exist?: boolean } 默认要求目录已存在；工具目录可能由本会话稍后安装的插件创建
+---@param opts? { must_exist?: boolean } Existing directories are required by default.
 function M.prepend_path(paths, opts)
   local must_exist = not (opts and opts.must_exist == false)
   local current = vim.env.PATH or ""

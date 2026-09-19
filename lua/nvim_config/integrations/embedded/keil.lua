@@ -4,10 +4,10 @@ local platform = require("nvim_config.core.platform")
 local function notify_result(result)
   local text = vim.trim(table.concat({ result.stdout or "", result.stderr or "" }, "\n"))
   if result.code == 0 then
-    vim.notify(text ~= "" and text or "Keil clangd 配置已生成")
+    vim.notify(text ~= "" and text or "Keil clangd configuration generated")
     pcall(vim.cmd, "lsp restart")
   else
-    vim.notify(text ~= "" and text or "Keil clangd 配置生成失败", vim.log.levels.ERROR)
+    vim.notify(text ~= "" and text or "Failed to generate the Keil clangd configuration", vim.log.levels.ERROR)
   end
 end
 
@@ -50,7 +50,7 @@ local function run(project, target)
     vim.list_extend(command, { "-UV4", uv4 })
   end
 
-  vim.notify("正在从 µVision 工程生成 compile_commands.json…")
+  vim.notify("Generating compile_commands.json from the µVision project...")
   vim.system(command, { cwd = vim.fn.getcwd(), text = true }, function(result)
     vim.schedule(function()
       notify_result(result)
@@ -61,11 +61,11 @@ end
 local function choose_target(project)
   local targets = target_names(project)
   if #targets == 0 then
-    vim.notify("该 .uvprojx 中没有 Target", vim.log.levels.ERROR)
+      vim.notify("The .uvprojx file does not contain any targets", vim.log.levels.ERROR)
   elseif #targets == 1 then
     run(project, targets[1])
   else
-    vim.ui.select(targets, { prompt = "选择 Keil Target" }, function(target)
+    vim.ui.select(targets, { prompt = "Select a Keil target" }, function(target)
       if target then
         run(project, target)
       end
@@ -81,12 +81,12 @@ function M.generate()
 
   table.sort(projects)
   if #projects == 0 then
-    vim.notify("当前目录下没有找到 .uvprojx 工程", vim.log.levels.ERROR)
+      vim.notify("No .uvprojx project was found in the current directory", vim.log.levels.ERROR)
   elseif #projects == 1 then
     choose_target(projects[1])
   else
     vim.ui.select(projects, {
-      prompt = "选择 Keil 工程",
+      prompt = "Select a Keil project",
       format_item = function(path)
         return vim.fs.relpath(cwd, path) or path
       end,
@@ -99,7 +99,7 @@ function M.generate()
 end
 
 vim.api.nvim_create_user_command("KeilClangd", M.generate, {
-  desc = "选择当前目录中的 Keil 工程并生成 clangd 配置",
+    desc = "Select a Keil project in the current directory and generate clangd configuration",
 })
 
 return M

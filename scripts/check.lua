@@ -13,7 +13,7 @@ else
   tracked_files = vim.split(tracked_result.stdout or "", "\0", { plain = true, trimempty = true })
 end
 
--- 只检查已跟踪的 Lua 文件；local.lua、日志和 Git worktree 元数据不属于发布内容。
+-- Check tracked Lua files only. Local overrides, logs, and worktree metadata are not release content.
 for _, path in ipairs(tracked_files) do
   if path:sub(-4) == ".lua" and (path:match("^lua/") or path:match("^scripts/")) then
     local file = vim.fs.joinpath(root, path)
@@ -22,6 +22,16 @@ for _, path in ipairs(tracked_files) do
       fail(file .. ": " .. error_message)
     end
   end
+end
+
+local function contains_cjk(text)
+  for index = 0, vim.fn.strchars(text) - 1 do
+    local codepoint = vim.fn.char2nr(vim.fn.strcharpart(text, index, 1), true)
+    if codepoint >= 0x3400 and codepoint <= 0x9fff then
+      return true
+    end
+  end
+  return false
 end
 
 local required_files = {
@@ -59,6 +69,9 @@ for _, path in ipairs(tracked_files) do
     for line_number, line in ipairs(vim.split(content, "\n", { plain = true })) do
       if line:match(drive_at_start) or line:match(drive_after_separator) or line:match(unix_home) then
         fail(string.format("Machine-specific absolute path: %s:%d", path, line_number))
+      end
+      if not path:match("^docs/") and not path:match("%.md$") and contains_cjk(line) then
+        fail(string.format("CJK text is only allowed in documentation: %s:%d", path, line_number))
       end
     end
 

@@ -1,5 +1,5 @@
--- 光标是否位于 fenced code block（``` ... ```）内部：
--- .qmd 的正文保持安静，只有代码块里才自动弹补全。
+-- Detect whether the cursor is inside a fenced code block. Keep prose in .qmd
+-- quiet while allowing automatic completion inside code fences.
 local function in_code_fence()
   local ok, node = pcall(vim.treesitter.get_node)
   while ok and node do
@@ -26,9 +26,8 @@ return {
   -- use a release tag to download pre-built binaries
   version = "1.*",
   opts = {
-    -- markdown (.md) 里没有值得补全的正文内容，整体关闭：
-    -- 关闭后 blink 的键位映射也不生效，<Tab> 回到普通的缩进行为。
-    -- quarto (.qmd) 保持启用，以便代码块内的补全可用（弹窗策略见下面的 auto_show）。
+    -- Disable completion for Markdown prose so Tab keeps its normal indentation
+    -- behavior. Keep Quarto enabled for fenced code blocks.
     enabled = function()
       return vim.bo.filetype ~= "markdown"
     end,
@@ -38,23 +37,23 @@ return {
 
       ["<Tab>"] = {
         function(cmp)
-          -- 1. 如果补全菜单可见，选择下一项（不自动插入）
+        -- Select the next item when the completion menu is visible.
           if cmp.is_visible() then
             return cmp.select_next()
           end
 
-          -- 2. 如果处于 snippet 编辑状态，跳转到下一个占位符
+        -- Otherwise jump to the next snippet placeholder when possible.
           if cmp.snippet_active({ direction = 1 }) then
             return cmp.snippet_forward()
           end
 
-          -- 3. 否则，交还给 fallback（比如插入 <Tab> 字符）
-          return false -- 等价于触发 'fallback'
+        -- Otherwise delegate to the normal Tab behavior.
+        return false
         end,
-        "fallback", -- 安全兜底（虽然函数已处理，但保留更健壮）
+      "fallback",
       },
 
-      -- 可选：Shift+Tab 处理上一个
+    -- Previous item / snippet placeholder.
       ["<S-Tab>"] = {
         function(cmp)
           if cmp.is_visible() then
@@ -88,8 +87,8 @@ return {
         },
       },
       menu = {
-        -- .qmd 正文里不自动弹窗，只在围栏代码块内自动补全；
-        -- 任何位置都可以用 <C-space> 手动触发。markdown 已整体关闭，这里也返回 false。
+        -- Auto-show only inside Quarto code fences. Manual <C-space> remains
+        -- available wherever completion is enabled.
         auto_show = function()
           return vim.bo.filetype ~= "markdown" and (vim.bo.filetype ~= "quarto" or in_code_fence())
         end,
@@ -154,8 +153,8 @@ return {
       },
     },
 
-    -- 使用 Neovim 原生 LSP 签名窗口，避免部分 clangd 返回值使 Blink
-    -- 的活动参数高亮错误扩展到整个浮动窗口。
+      -- Use Neovim's native signature window. Some clangd responses can make
+      -- Blink extend active-parameter highlighting across the entire float.
     signature = { enabled = false },
 
     sources = {

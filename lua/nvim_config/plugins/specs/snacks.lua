@@ -6,7 +6,7 @@ return {
     indent = {
       enabled = true,
 
-      -- 背景灰色普通缩进线
+      -- Regular indentation guides.
       indent = {
         priority = 1,
         enabled = true, -- enable indent guides
@@ -15,7 +15,7 @@ return {
         only_current = false, -- only show indent guides in the current window
       },
 
-      -- 当前所在代码块
+      -- Current scope guide.
       scope = {
         enabled = true, -- enable highlighting the current scope
         priority = 200,
@@ -26,7 +26,7 @@ return {
       },
     },
 
-    -- 替代telescope
+    -- Picker UI.
     picker = {
       enabled = true,
       win = {

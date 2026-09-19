@@ -2,7 +2,7 @@ return {
   "stevearc/aerial.nvim",
   config = function()
     require("aerial").setup({
-      backends = { "lsp", "treesitter" }, -- 优先 LSP，回退 Treesitter
+      backends = { "lsp", "treesitter" }, -- Prefer LSP and fall back to Treesitter.
       -- filter_kind = {
       --   "Class",
       --   "Constructor",
@@ -12,10 +12,10 @@ return {
       --   "Module",
       --   "Method",
       --   "Struct",
-      --   "Variable", -- 👈 添加变量
-      --   "Constant", -- 👈 添加常量
-      --   "Property", -- 👈 属性（如 JS/TS 中的 class 属性）
-      --   "Field", -- 👈 字段（如 struct/class 成员）
+        --   "Variable",
+        --   "Constant",
+        --   "Property",
+        --   "Field",
       -- },
 
       filter_kind = false,
@@ -34,8 +34,8 @@ return {
         max_height = 0.8,
         height = 0.7,
       },
-      show_guides = true, -- 👈 启用缩进引导线（分割线）
-      guides = { -- 引导线使用的字符（aerial 中即 "guides"，没有 guide_chars 这个键）
+      show_guides = true,
+      guides = { -- Aerial calls this option "guides" rather than "guide_chars".
         mid_item = "├─",
         last_item = "└─",
         nested_top = "│ ",
@@ -43,8 +43,8 @@ return {
       },
       autojump = true,
     })
-    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle float<CR>", { desc = "浮动代码大纲" })
+    vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle float<CR>", { desc = "Floating code outline" })
   end,
-  -- 如果使用懒加载
+  -- Lazy-load on the mapping.
   keys = { "<leader>o" },
 }

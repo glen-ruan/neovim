@@ -2,22 +2,22 @@ local M = {}
 
 M.commands = {
   core = {
-    { name = "git", required = true, purpose = "插件与配置更新" },
-    { name = "curl", required = true, purpose = "下载工具" },
-    { name = "tar", required = true, purpose = "解压工具" },
+    { name = "git", required = true, purpose = "plugin and configuration updates" },
+    { name = "curl", required = true, purpose = "downloads" },
+    { name = "tar", required = true, purpose = "archive extraction" },
   },
   search = {
-    { name = "rg", required = true, purpose = "全文搜索" },
-    { name = "fd", aliases = { "fdfind" }, required = false, purpose = "快速文件搜索" },
+    { name = "rg", required = true, purpose = "full-text search" },
+    { name = "fd", aliases = { "fdfind" }, required = false, purpose = "fast file search" },
   },
   development = {
-    { name = "tree-sitter", required = false, purpose = "编译 Treesitter parser" },
-    { name = "node", required = false, purpose = "部分语言服务器和 Markdown 预览" },
-    { name = "quarto", required = false, purpose = "Quarto 预览" },
+    { name = "tree-sitter", required = false, purpose = "compile Treesitter parsers" },
+    { name = "node", required = false, purpose = "selected language servers and Markdown preview" },
+    { name = "quarto", required = false, purpose = "Quarto preview" },
   },
   latex = {
-    { name = "latexmk", required = false, purpose = "LaTeX 编译" },
-    { name = "xelatex", required = false, purpose = "XeLaTeX 引擎" },
+    { name = "latexmk", required = false, purpose = "LaTeX compilation" },
+    { name = "xelatex", required = false, purpose = "XeLaTeX engine" },
   },
 }
 

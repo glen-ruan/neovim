@@ -1,17 +1,17 @@
 -- plugins/theme.lua
 
--- 定义你想用的主题名字
--- 可选: "tokyonight" 或 "catppuccin"
+-- Select the active colorscheme.
+-- Other supported choices include "tokyonight" and "catppuccin".
 local active_theme = "onedark"
 
--- 定义主题配置表
+-- Colorscheme specifications.
 local themes = {
   -- tokyonight
   tokyonight = {
     "folke/tokyonight.nvim",
     config = function()
       require("tokyonight").setup({
-        style = "night", -- 可选: "storm", "night", "moon", "day"
+      style = "night", -- "storm", "night", "moon", or "day"
         transparent = true,
         terminal_colors = true,
         lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
@@ -34,7 +34,7 @@ local themes = {
     name = "catppuccin",
     config = function()
       require("catppuccin").setup({
-        flavour = "macchiato", -- 可选: "latte", "frappe", "macchiato", "mocha"
+      flavour = "macchiato", -- "latte", "frappe", "macchiato", or "mocha"
         background = { light = "latte", dark = "mocha" },
         transparent_background = true,
         term_colors = true,
@@ -59,28 +59,28 @@ local themes = {
     "ellisonleao/gruvbox.nvim",
     config = function()
       require("gruvbox").setup({
-        contrast = "medium", -- 可选: "hard", "medium", "soft"
-        transparent_mode = false, -- 背景透明
+      contrast = "medium", -- "hard", "medium", or "soft"
+      transparent_mode = false,
       })
       vim.cmd("colorscheme gruvbox")
     end,
   },
 
-  -- Nightfox 主题配置
+-- Nightfox configuration.
   nightfox = {
     "EdenEast/nightfox.nvim",
     config = function()
       require("nightfox").setup({
         options = {
-          -- 背景透明（浮动窗口、侧边栏等）
+      -- Transparent floating windows and sidebars.
           transparent = false,
-          -- 设置终端颜色
+      -- Terminal colors.
           terminal_colors = true,
-          -- 非激活窗口背景
+      -- Inactive window background.
           dim_inactive = false,
-          -- 默认模块启用
+      -- Enable default modules.
           module_default = true,
-          -- 样式设置
+      -- Style settings.
           styles = {
             comments = "italic",
             conditionals = "italic",
@@ -96,7 +96,7 @@ local themes = {
         },
       })
 
-      -- 设置颜色方案
+-- Configure colorschemes.
       vim.cmd("colorscheme dawnfox")
     end,
   },
@@ -156,11 +156,11 @@ local themes = {
         cmp_itemkind_reverse = false, -- reverse item kind highlights in cmp menu
 
         -- code_style = {
-        --   comments = "italic", -- 注释：轻、斜，弱化存在感
-        --   keywords = "bold", -- 关键字：结构骨架，要稳
-        --   functions = "bold", -- 函数名：重点
-        --   strings = "italic", -- 字符串：略微区分
-        --   variables = "none", -- 变量：保持干净
+      --   comments = "italic",
+      --   keywords = "bold",
+      --   functions = "bold",
+      --   strings = "italic",
+      --   variables = "none",
         -- },
 
         code_style = {
@@ -272,5 +272,5 @@ local themes = {
   },
 }
 
--- 返回当前激活的主题配置
+-- Return the active colorscheme specification.
 return { themes[active_theme] }

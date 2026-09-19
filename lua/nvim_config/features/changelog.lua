@@ -13,8 +13,8 @@ local function close()
   win = nil
 end
 
---- 在浮动窗口里打开本仓库的 CHANGELOG.md。
---- 再执行一次命令、或按 q / Esc 关闭；内容只读，带 markdown 高亮。
+--- Open this repository's CHANGELOG.md in a read-only floating window.
+--- Run the command again or press q / Esc to close it.
 function M.open()
   if win and vim.api.nvim_win_is_valid(win) then
     close()
@@ -23,7 +23,7 @@ function M.open()
 
   local file = path()
   if vim.fn.filereadable(file) ~= 1 then
-    vim.notify("找不到 " .. file, vim.log.levels.ERROR)
+    vim.notify("File not found: " .. file, vim.log.levels.ERROR)
     return
   end
 
@@ -48,14 +48,14 @@ function M.open()
     col = math.floor((vim.o.columns - width) / 2),
   })
 
-  vim.keymap.set("n", "q", close, { buffer = buf, desc = "关闭 CHANGELOG" })
-  vim.keymap.set("n", "<Esc>", close, { buffer = buf, desc = "关闭 CHANGELOG" })
+  vim.keymap.set("n", "q", close, { buffer = buf, desc = "Close CHANGELOG" })
+  vim.keymap.set("n", "<Esc>", close, { buffer = buf, desc = "Close CHANGELOG" })
 end
 
---- 注册 :ConfigChangelog 命令。
+--- Register the :ConfigChangelog command.
 function M.setup()
   vim.api.nvim_create_user_command("ConfigChangelog", M.open, {
-    desc = "在浮动窗口里查看配置的变更日志（CHANGELOG.md）",
+    desc = "View the configuration changelog in a floating window",
   })
 end
 

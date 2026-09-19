@@ -131,6 +131,7 @@ function M.check()
     end
   end
   executable("node", false)
+  executable("gh", false)
   executable("quarto", false)
   executable("clangd", false)
   executable("cmake-language-server", false)

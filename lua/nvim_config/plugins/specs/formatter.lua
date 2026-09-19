@@ -8,7 +8,7 @@ return {
         function()
           require("conform").format({ async = true, lsp_format = "fallback" })
         end,
-        desc = "格式化当前文件",
+      desc = "Format current file",
       },
     },
     opts = {
@@ -27,8 +27,7 @@ return {
         tex = { "tex-fmt", "latexindent", stop_after_first = true },
       },
       notify_on_error = true,
-      -- latexindent 默认把 indent.log 和备份文件写进当前工作目录，
-      -- 这里显式指定 cruft 目录（-c），避免污染项目目录。
+        -- Keep latexindent logs and backups in a dedicated cruft directory.
       formatters = {
         latexindent = {
           args = { "-c=" .. vim.fn.stdpath("state"), "-" },

@@ -46,15 +46,15 @@ function M.generate(configuration)
     vim.list_extend(command, { "-IarBuild", iarbuild })
   end
 
-  vim.notify("正在读取 IAR 工程并生成 compile_commands.json…")
+  vim.notify("Reading the IAR project and generating compile_commands.json...")
   vim.system(command, { cwd = working_directory, text = true }, function(result)
     vim.schedule(function()
       local message = output_text(result)
       if result.code == 0 then
-        vim.notify(message ~= "" and message or "IAR clangd 配置已生成")
+      vim.notify(message ~= "" and message or "IAR clangd configuration generated")
         pcall(vim.cmd, "lsp restart")
       else
-        vim.notify(message ~= "" and message or "IAR clangd 配置生成失败", vim.log.levels.ERROR)
+      vim.notify(message ~= "" and message or "Failed to generate the IAR clangd configuration", vim.log.levels.ERROR)
       end
     end)
   end)
@@ -64,7 +64,7 @@ vim.api.nvim_create_user_command("IarClangd", function(options)
   M.generate(options.args)
 end, {
   nargs = "?",
-  desc = "从当前目录中的 IAR .ewp 工程生成 clangd 配置",
+    desc = "Generate clangd configuration from an IAR .ewp project in the current directory",
 })
 
 return M

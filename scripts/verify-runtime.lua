@@ -85,6 +85,11 @@ for _, lhs in ipairs({
   "<leader>ss",
   "<leader>sS",
   "<leader>nh",
+  "<leader>ghr",
+  "<leader>ghi",
+  "<leader>ghp",
+  "<leader>ghn",
+  "<leader>ghs",
   "<leader>o",
   "<leader>rn",
   "<leader>gv",
@@ -95,6 +100,29 @@ for _, lhs in ipairs({
 }) do
   has_mapping("n", lhs)
 end
+
+require("lazy").load({ plugins = { "octo.nvim" } })
+has_command("Octo")
+local octo_ok, octo_config = pcall(require, "octo.config")
+if not octo_ok or not octo_config.values or octo_config.values.picker ~= "snacks" then
+  fail("Octo did not load with the Snacks picker")
+end
+
+local windows = require("nvim_config.core.windows")
+if not windows.is_editor_buffer() then
+  fail("ordinary verification buffer was not recognized as an editor buffer")
+end
+
+local protected_buffer = vim.api.nvim_create_buf(false, true)
+vim.bo[protected_buffer].buftype = "nofile"
+vim.api.nvim_set_current_buf(protected_buffer)
+if windows.is_editor_buffer() then
+  fail("nofile buffer was incorrectly recognized as an editor buffer")
+end
+if windows.close() ~= false or vim.api.nvim_get_current_buf() ~= protected_buffer then
+  fail("protected buffer was closed by the editor-only quit action")
+end
+vim.api.nvim_buf_delete(protected_buffer, { force = true })
 
 for _, lhs in ipairs({ "<Tab>", "<S-Tab>" }) do
   has_mapping("v", lhs)

@@ -9,8 +9,8 @@ fi
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 config_root=$(dirname -- "$script_dir")
 
-# -l 会跳过用户配置，所以必须同时用 -u 指定 init.lua；安装与校验都在
-# scripts/bootstrap.lua 里完成，只有 -l 模式才会因 Lua 错误返回非零退出码。
+# -l skips user configuration, so -u must load init.lua explicitly. Installation
+# and verification live in bootstrap.lua so Lua failures produce a nonzero exit code.
 if ! nvim --headless -i NONE -u "$config_root/init.lua" -l "$script_dir/bootstrap.lua"; then
   echo "Bootstrap failed." >&2
   exit 1

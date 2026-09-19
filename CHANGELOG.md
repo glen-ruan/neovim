@@ -1,7 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.0.0 - 2026-09-19
 
+- Restrict `<leader>q` to regular editor buffers so an accidental quit mapping cannot close Neo-tree or another utility window.
+- Add Octo with the Snacks picker for browsing GitHub repositories, issues, pull requests, discussions, notifications, and reviews inside Neovim.
+- Standardize comments, notifications, prompts, and errors in non-documentation files on English, with a CI contract preventing regressions.
 - Add a real-plugin runtime contract check covering documented commands and core, search, Git, DAP, LSP, formatting, Quarto, and terminal keymaps.
 - Keep hover and signature help as passive, non-focusable floating windows that close on cursor movement, without a `q`-to-close interaction.
 - Restore `:LspInfo` on Neovim 0.12 as a compatibility alias for the native `:checkhealth vim.lsp` report.
