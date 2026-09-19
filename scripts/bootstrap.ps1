@@ -16,4 +16,4 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-Write-Host 'Bootstrap complete. Run :checkhealth nvim_distribution in Neovim.'
+Write-Host 'Bootstrap complete. Run :checkhealth nvim_config in Neovim.'

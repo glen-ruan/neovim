@@ -38,7 +38,7 @@ vim.opt.iskeyword:append("-")
 vim.o.whichwrap = vim.o.whichwrap .. "<>,h,l"
 
 -- Make tools installed below Neovim's data directory visible on every platform.
-local platform = require("config.platform")
+local platform = require("nvim_config.core.platform")
 local data = vim.fn.stdpath("data")
 local tool_paths = {}
 if vim.env.UV_TOOL_BIN_DIR and vim.env.UV_TOOL_BIN_DIR ~= "" then

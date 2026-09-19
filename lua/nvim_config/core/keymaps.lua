@@ -1,8 +1,3 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
-
--- lua/keymaps.lua
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
@@ -46,13 +41,12 @@ map("n", "<leader>vl", "V", { desc = "选中当前行" })
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", opts)
 
 -- 打开一个浮动终端
-local float_term = require("customs.float_trem")
+local float_term = require("nvim_config.features.terminal")
 map("n", "<leader>ft", float_term.toggle, { desc = "打开/关闭浮动终端" })
 
 -- 打开诊断窗口
 map("n", "<leader>xx", ":Trouble diagnostics toggle<CR>", opts)
 
--- 在你的 keymaps.lua 中添加
 map("v", "<Tab>", ">gv", opts)
 map("v", "<S-Tab>", "<gv", opts) -- Shift+Tab 减少缩进并保持选区
 

@@ -16,4 +16,4 @@ if ! nvim --headless -i NONE -u "$config_root/init.lua" -l "$script_dir/bootstra
   exit 1
 fi
 
-echo "Bootstrap complete. Run :checkhealth nvim_distribution in Neovim."
+echo "Bootstrap complete. Run :checkhealth nvim_config in Neovim."

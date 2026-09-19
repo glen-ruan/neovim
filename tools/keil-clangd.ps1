@@ -30,15 +30,6 @@ function Resolve-UV4Path {
         return $command.Source
     }
 
-    foreach ($candidate in @(
-        'C:\Keil_v5\UV4\UV4.exe',
-        'C:\Keil\UV4\UV4.exe'
-    )) {
-        if (Test-Path -LiteralPath $candidate) {
-            return (Resolve-Path -LiteralPath $candidate).Path
-        }
-    }
-
     throw 'UV4.exe was not found. Pass -UV4 or set the UV4_EXE environment variable.'
 }
 function Resolve-TargetName {

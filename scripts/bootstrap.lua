@@ -17,10 +17,16 @@ end
 
 run("前置检查", function()
   local missing = {}
-  for _, name in ipairs({ "git", "curl", "tar", "tree-sitter" }) do
-    if vim.fn.executable(name) ~= 1 then
-      missing[#missing + 1] = name
+  local dependencies = require("nvim_config.dependencies")
+  for _, group_name in ipairs({ "core", "search" }) do
+    for _, dependency in ipairs(dependencies.commands[group_name]) do
+      if dependency.required and not dependencies.resolve(dependency) then
+        missing[#missing + 1] = dependency.name
+      end
     end
+  end
+  if vim.fn.executable("tree-sitter") ~= 1 then
+    missing[#missing + 1] = "tree-sitter"
   end
   if #missing > 0 then
     error("以下命令不在 PATH 中：" .. table.concat(missing, ", "))
@@ -63,7 +69,8 @@ end)
 run("校验 mason 工具", function()
   -- ensure_installed 直接读插件规格文件，避免两处维护导致漏检。
   local expected = {}
-  for _, spec in ipairs(dofile(vim.fn.stdpath("config") .. "/lua/plugins/mason.lua")) do
+  local spec_path = vim.fs.joinpath(vim.fn.stdpath("config"), "lua", "nvim_config", "plugins", "specs", "mason.lua")
+  for _, spec in ipairs(dofile(spec_path)) do
     if type(spec) == "table" and spec.opts and spec.opts.ensure_installed then
       vim.list_extend(expected, spec.opts.ensure_installed)
     end
@@ -101,7 +108,8 @@ run("检查可选依赖", function()
       "LaTeX 工具链缺少 %s；本配置固定使用 latexmk -xelatex，缺失时编译以退出码 127 失败。",
       table.concat(latex, "、")
     )
-    hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk"
+    hints[#hints + 1] =
+      "  Ubuntu 可执行：sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk"
   elseif vim.fn.executable("kpsewhich") == 1 then
     local absent = {}
     for _, style in ipairs({ "ctex.sty", "xeCJK.sty" }) do
@@ -115,10 +123,6 @@ run("检查可选依赖", function()
     end
   end
 
-  if vim.fn.executable("rg") ~= 1 then
-    hints[#hints + 1] = "rg 缺失，Snacks.picker.grep() 没有回退，`空格 f g` 无法使用（Mason 不提供这个包）"
-    hints[#hints + 1] = "  Ubuntu 可执行：sudo apt install ripgrep"
-  end
   if vim.fn.executable("fd") ~= 1 then
     hints[#hints + 1] = "fd 缺失，文件与项目搜索会退回更慢的实现"
   end
@@ -133,4 +137,4 @@ run("检查可选依赖", function()
   end
 end)
 
-print("bootstrap 完成。进入 Neovim 后可用 :checkhealth nvim_distribution 复查。")
+print("bootstrap 完成。进入 Neovim 后可用 :checkhealth nvim_config 复查。")

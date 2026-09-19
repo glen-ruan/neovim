@@ -1,0 +1,20 @@
+local M = {}
+
+function M.show_availability()
+  local servers = require("nvim_config.dependencies").lsp
+  local lines = {}
+  for name, command in pairs(servers) do
+    local path = vim.fn.exepath(command)
+    table.insert(lines, string.format("%-10s %s", name, path ~= "" and path or "missing"))
+  end
+  table.sort(lines)
+  vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "LSP availability" })
+end
+
+function M.setup()
+  vim.api.nvim_create_user_command("LspAvailability", M.show_availability, {
+    desc = "显示语言服务器可用状态",
+  })
+end
+
+return M

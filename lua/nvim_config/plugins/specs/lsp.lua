@@ -10,7 +10,7 @@ return {
     },
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()
-      local platform = require("config.platform")
+      local platform = require("nvim_config.core.platform")
 
       -- 只强调当前参数文字，避免配色方案给签名窗口铺满背景色。
       vim.api.nvim_set_hl(0, "LspSignatureActiveParameter", { bold = true, underline = true })
@@ -145,16 +145,6 @@ return {
         pattern = "MasonToolsUpdateCompleted",
         callback = enable_available_servers,
       })
-
-      vim.api.nvim_create_user_command("LspAvailability", function()
-        local lines = {}
-        for name, config in pairs(servers) do
-          local command = config.cmd and config.cmd[1]
-          local path = command and vim.fn.exepath(command) or ""
-          table.insert(lines, string.format("%-10s %s", name, path ~= "" and path or "missing"))
-        end
-        vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "LSP availability" })
-      end, { desc = "显示语言服务器可用状态" })
 
       require("lspsaga").setup({
         ui = { border = "rounded" },

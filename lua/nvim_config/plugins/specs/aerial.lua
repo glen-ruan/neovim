@@ -1,5 +1,4 @@
-return -- 使用 lazy.nvim 安装示例
-{
+return {
   "stevearc/aerial.nvim",
   config = function()
     require("aerial").setup({

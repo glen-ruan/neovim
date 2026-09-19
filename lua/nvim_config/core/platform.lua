@@ -4,19 +4,7 @@ M.is_windows = vim.fn.has("win32") == 1
 M.is_linux = vim.fn.has("linux") == 1
 M.path_separator = M.is_windows and ";" or ":"
 
-local local_config_path = vim.fs.joinpath(vim.fn.stdpath("config"), "local.lua")
-local settings = {}
-if vim.fn.filereadable(local_config_path) == 1 then
-  local ok, result = pcall(dofile, local_config_path)
-  if ok and type(result) == "table" then
-    settings = result
-  else
-    vim.schedule(function()
-      local reason = ok and "文件必须返回一个 Lua table" or tostring(result)
-      vim.notify("无法加载本机配置 " .. local_config_path .. ":\n" .. reason, vim.log.levels.ERROR)
-    end)
-  end
-end
+local settings = require("nvim_config.core.settings").get()
 M.settings = settings
 
 local function usable(command)
@@ -74,29 +62,12 @@ function M.prepend_path(paths, opts)
 end
 
 function M.project_python(start_path)
-  -- 暂时只使用工程内由 uv 创建的 .venv，避免全局环境掩盖缺失依赖。
-  --[[
   local configured = M.find_executable("python", "NVIM_PYTHON", {})
   if configured then
     return configured
   end
-  ]]
 
   local suffixes = M.is_windows and { "Scripts/python.exe", "python.exe" } or { "bin/python", "bin/python3" }
-  --[[
-  local environments = { "VIRTUAL_ENV", "CONDA_PREFIX" }
-  for _, name in ipairs(environments) do
-    local environment = vim.env[name]
-    if environment and environment ~= "" then
-      for _, suffix in ipairs(suffixes) do
-        local candidate = vim.fs.joinpath(environment, suffix)
-        if usable(candidate) then
-          return candidate
-        end
-      end
-    end
-  end
-  ]]
 
   local directory = start_path or vim.fn.getcwd()
   if vim.fn.isdirectory(directory) ~= 1 then
@@ -116,9 +87,6 @@ function M.project_python(start_path)
     directory = parent
   end
 
-  -- 系统 Python 回退暂时禁用，确保缺少 .venv 时不会误用全局包。
-  -- local names = M.is_windows and { "python", "python3" } or { "python3", "python" }
-  -- return M.find_executable(nil, nil, names)
   return nil
 end
 

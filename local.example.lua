@@ -1,11 +1,11 @@
--- Copy this file to local.lua and edit only values needed on this machine.
--- local.lua is ignored by Git.
+-- Copy this file to local.lua and set only the tools that are not available in PATH.
+-- local.lua is ignored by Git. Every value is optional.
 return {
   tools = {
-    -- python = "C:/path/to/python.exe",
-    -- debugpy_python = "C:/path/to/debugpy/Scripts/python.exe",
-    -- powershell = "C:/Program Files/PowerShell/7/pwsh.exe",
-    -- iarbuild = "D:/IAR/common/bin/IarBuild.exe",
-    -- uv4 = "D:/Keil_v5/UV4/UV4.exe",
+    -- python = "<absolute-path-to-python>",
+    -- debugpy_python = "<absolute-path-to-debugpy-python>",
+    -- powershell = "<absolute-path-to-powershell>",
+    -- iarbuild = "<absolute-path-to-IarBuild.exe>",
+    -- uv4 = "<absolute-path-to-UV4.exe>",
   },
 }

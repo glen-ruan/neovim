@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Move runtime code into the `nvim_config` namespace with separate core, feature, integration, and plugin-spec modules.
+- Keep the root `init.lua` as a stable one-line entry point and load IAR/Keil integrations only on Windows.
+- Add startup-time `:LspAvailability`, restore documented Python overrides, and remove tracked executable-location fallbacks.
+- Replace repository-centric documentation with user guides for installation, configuration, dependencies, keymaps, embedded development, troubleshooting, and contribution.
+- Add repository path-leak, Markdown-link, settings-schema, startup-command, startup-mapping, and plugin-spec checks to cross-platform CI.
+- Rename the custom health provider to `:checkhealth nvim_config`.
+
 ## 1.0.8 - 2026-09-14
 
 - Show the configuration version in the statusline and add `:ConfigVersion` (version, branch and commit), so it is obvious which release a machine is running.

@@ -105,16 +105,6 @@ function Resolve-IarBuildPath {
         return $command.Source
     }
 
-    $knownLocations = @(
-        'C:\Program Files\IAR Systems\Embedded Workbench\common\bin\IarBuild.exe',
-        'C:\Program Files (x86)\IAR Systems\Embedded Workbench\common\bin\IarBuild.exe'
-    )
-    foreach ($candidate in $knownLocations) {
-        if (Test-Path -LiteralPath $candidate) {
-            return (Resolve-Path -LiteralPath $candidate).Path
-        }
-    }
-
     throw 'IarBuild.exe was not found. Pass -IarBuild or set the IARBUILD environment variable.'
 }
 

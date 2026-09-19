@@ -28,7 +28,8 @@ return {
       group = vim.api.nvim_create_augroup("RemoveInitialEmptyBuffer", { clear = true }),
       callback = function(args)
         for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-          if bufnr ~= args.buf
+          if
+            bufnr ~= args.buf
             and vim.api.nvim_buf_is_loaded(bufnr)
             and vim.bo[bufnr].buflisted
             and vim.bo[bufnr].buftype == ""

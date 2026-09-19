@@ -1,5 +1,5 @@
 local M = {}
-local platform = require("config.platform")
+local platform = require("nvim_config.core.platform")
 
 local function output_text(result)
   local parts = {}

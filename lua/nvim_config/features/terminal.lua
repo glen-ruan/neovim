@@ -1,6 +1,3 @@
--- 文件名: float_term.lua
--- 路径建议放在: ~/.config/nvim/lua/float_term.lua
-
 local M = {}
 
 M.term_buf = nil

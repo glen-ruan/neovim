@@ -105,22 +105,33 @@ local function ripgrep()
 end
 
 function M.check()
-  local platform = require("config.platform")
-  vim.health.start("Neovim distribution")
+  local platform = require("nvim_config.core.platform")
+  local dependencies = require("nvim_config.dependencies")
+  vim.health.start("nvim_config")
   local version = vim.version()
   vim.health.info(string.format("Neovim %d.%d.%d", version.major, version.minor, version.patch))
   vim.health.info("config: " .. vim.fn.stdpath("config"))
   vim.health.info("data: " .. vim.fn.stdpath("data"))
   vim.health.info("platform: " .. (platform.is_windows and "Windows" or platform.is_linux and "Linux" or "Unix"))
 
-  executable("git", true)
-  executable("curl", true)
-  executable("tar", true)
+  for _, dependency in ipairs(dependencies.commands.core) do
+    executable(dependency.name, dependency.required)
+  end
   tree_sitter()
   compiler()
   ripgrep()
-  executable("fd", false)
+  for _, dependency in ipairs(dependencies.commands.search) do
+    if dependency.name ~= "rg" then
+      local path, name = dependencies.resolve(dependency)
+      if path then
+        vim.health.ok(name .. ": " .. path)
+      else
+        vim.health.warn(dependency.name .. " was not found (optional)")
+      end
+    end
+  end
   executable("node", false)
+  executable("quarto", false)
   executable("clangd", false)
   executable("cmake-language-server", false)
   latex()
@@ -129,7 +140,7 @@ function M.check()
   if python then
     vim.health.ok("Project .venv Python: " .. python)
   else
-    vim.health.warn("No project .venv was found from the current working directory")
+    vim.health.warn("No configured Python or project .venv was found from the current working directory")
   end
 
   local debugpy = platform.debugpy_python()

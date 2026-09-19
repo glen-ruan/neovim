@@ -10,7 +10,7 @@ return {
     config = function()
       local dap = require("dap")
       local ui = require("dapui")
-      local platform = require("config.platform")
+      local platform = require("nvim_config.core.platform")
       local adapter = platform.debugpy_python()
       local layout_before_debug
       local debug_ui_open = false

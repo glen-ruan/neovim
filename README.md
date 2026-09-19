@@ -1,94 +1,35 @@
-# Neovim 配置
+# Neovim 配置发行版
 
-这是 `glen-ruan` 的跨平台 Neovim 配置发行版，支持 Windows 和 Linux，面向 Neovim 0.12+，使用 `lazy.nvim` 管理插件。所有运行时路径通过 Neovim 标准目录和 PATH 解析，不依赖某台设备的用户名或磁盘目录。
+一套面向日常开发、跨平台使用的 Neovim 配置，支持 Windows 与 Linux，最低要求为 Neovim 0.12。配置使用 `lazy.nvim` 锁定插件版本，并把语言服务、调试、写作和嵌入式工具作为按需启用的功能。
 
-## 文档
+## 功能
 
-- [快捷键说明](docs/Neovim快捷键说明.md)
-- [嵌入式开发流程](docs/嵌入式开发流程.md)
-- [版本记录](CHANGELOG.md)
+- Treesitter 语法高亮和代码结构导航
+- 原生 Neovim LSP、补全、格式化和诊断
+- 文件、全文、Git、符号和历史记录搜索
+- 文件树、Buffer 栏、浮动终端和通知历史
+- Diffview 文件历史与仓库差异视图
+- Python 调试
+- Markdown、Quarto 和 LaTeX 写作支持
+- Windows 下可选的 IAR、Keil clangd 编译数据库生成工具
 
-## 仓库内容
+## 安装要求
 
-```text
-init.lua                         配置入口
-lua/config/options.lua           编辑器选项、PATH 和 PowerShell
-lua/config/keymaps.lua           全局快捷键
-lua/config/autocmds.lua          自动命令
-lua/config/lazy.lua              lazy.nvim 引导和插件导入
-lua/config/platform.lua          平台、PATH 和本机配置解析
-lua/config/iar_clangd.lua        IAR 语言服务命令
-lua/config/keil_clangd.lua       Keil 语言服务命令
-lua/plugins/*.lua                插件配置
-lua/customs/float_trem.lua       浮动终端
-tools/iar-clangd.ps1             IAR 编译数据库生成器
-tools/keil-clangd.ps1            Keil 编译数据库生成器
-tools/clangd-compat/include      嵌入式 clangd 兼容头文件
-docs                             使用文档
-scripts                          引导、检查和可选工具安装脚本
-scripts/bootstrap.lua            引导脚本主体：恢复插件、安装并校验 Mason 工具与 Treesitter parser
-local.example.lua                本机私有路径配置模板
-lazy-lock.json                   插件版本锁定文件
-VERSION                          发行版本号
-stylua.toml                      Lua 格式化配置
-```
+基础安装需要：
 
-插件、Mason 工具、Treesitter parser 和日志位于 `stdpath("data")`，不属于本仓库。Windows 通常是 `%LOCALAPPDATA%\nvim-data`，Linux 通常是 `~/.local/share/nvim`。字节码缓存位于 `stdpath("cache")`（Windows 上在 `%TEMP%\nvim` 下，本配置在 Windows 已将其关闭）。
-
-## 主要组件
-
-- `nvim-treesitter`：语法树和高亮
-- `nvim-lspconfig`、`mason.nvim`：语言服务器
-- `blink.cmp`、`LuaSnip`：补全和代码片段
-- `snacks.nvim`：文件、文本、Buffer、Git 和 LSP 搜索
-- `neo-tree.nvim`、`bufferline.nvim`：文件树和 Buffer 栏
-- `nvim-dap`、`debugpy`：Python 调试
-- `conform.nvim`：代码格式化
-- `quarto-nvim`、`otter.nvim`：QMD 支持
-- `vimtex`：LaTeX 编译（latexmk -xelatex）和 PDF 预览
-- `gitsigns.nvim`：Git 修改标记
-
-## 环境要求
-
-- Neovim 0.12+
+- Neovim 0.12 或更新版本
 - Git、curl、tar
-- Node.js 和 Python
-- `tree-sitter-cli` 0.26.1+ 和可用的 C 编译器
-  - 安装：`npm install -g tree-sitter-cli`
-  - 只在编译 Treesitter parser 时需要（`:TSInstallConfigured!`）；已经编译好的 parser 不依赖它，所以缺了它日常编辑没有明显症状
-  - 用 nvm 管理 Node 时，`npm install -g` 会装到当前 Node 版本下，切换 Node 版本后需要重新安装
-- `ripgrep`（`rg`）：`Snacks.picker.grep()`（`空格 f g`）唯一的后端，没有回退
-  - Ubuntu：`sudo apt install ripgrep`
-  - Mason 不提供这个包（注册表里没有 ripgrep），所以 `:MasonToolsInstall` 装不到它，只能用系统包管理器或官方静态二进制
-- 按实际工程安装 IAR 或 Keil 工具链
+- ripgrep（命令名为 `rg`）
+- `tree-sitter-cli` 0.26.1 或更新版本
+- GCC、Clang、MSVC 等可用的 C 编译器
 
-以下依赖是可选的，缺失只会让对应功能不可用，不影响其余编辑工作。引导脚本和 `:checkhealth nvim_distribution` 都会提示缺失项：
-
-- **LaTeX**：`latexmk` 和 `xelatex` 引擎。本配置固定使用 `latexmk -xelatex`（fontspec 需要 XeLaTeX），排版中文文档还需要 `ctex` / `xeCJK`
-  - Ubuntu：`sudo apt install texlive-xetex texlive-lang-chinese texlive-latex-extra latexmk`
-  - 只装 `texlive-latex-extra` 和 `latexmk` **不够**：`xelatex` 由 `texlive-xetex` 提供，缺失时编译会以退出码 127 失败
-  - `latexindent`（`texlive-extra-utils`）只作为 `tex-fmt` 的格式化回退，`tex-fmt` 本身由 Mason 安装
-- **搜索加速**：`fd`
-  - Ubuntu 上包名是 `fd-find`，但可执行文件叫 `fdfind`。装了 `fdfind` 之后 `Snacks.picker.files()` 和 `projects()` 就能用（snacks 两个名字都接受），它比 `rg --files` 回退更快；再建个 `fd` 软链是为了让 `:checkhealth` 那项通过，并覆盖只认 `fd` 的 `Snacks.picker.explorer()`（本配置未绑定）：
-    `sudo apt install fd-find && ln -s "$(command -v fdfind)" ~/.local/bin/fd`
-
-## 本机配置
-
-仓库不保存任何设备专用绝对路径。工具链不在 PATH 时，复制模板并填写当前机器的路径：
-
-```powershell
-Copy-Item local.example.lua local.lua
-```
-
-```bash
-cp local.example.lua local.lua
-```
-
-`local.lua` 已被 Git 忽略。也可以使用环境变量 `NVIM_PYTHON`、`DEBUGPY_PYTHON`、`IARBUILD`、`UV4_EXE` 和 `NVIM_POWERSHELL`。
+其他工具只影响对应功能。完整分类和安装建议见 [依赖说明](docs/dependencies.md)。
 
 ## 安装
 
-Windows：
+安装前请备份已有的 Neovim 配置目录。
+
+Windows PowerShell：
 
 ```powershell
 git clone --branch main https://github.com/glen-ruan/neovim.git "$env:LOCALAPPDATA\nvim"
@@ -102,31 +43,61 @@ git clone --branch main https://github.com/glen-ruan/neovim.git ~/.config/nvim
 ~/.config/nvim/scripts/bootstrap.sh
 ```
 
-进入 Neovim 后检查：
+引导脚本严格恢复 `lazy-lock.json` 中锁定的插件版本，安装 Mason 工具和 Treesitter parsers，并在失败时返回非零退出码。
+
+## 首次启动
+
+启动 Neovim 后运行：
 
 ```vim
-:TSInstallConfigured!
-:checkhealth nvim_distribution
+:checkhealth nvim_config
 :LspAvailability
 ```
 
-`lazy-lock.json` 已纳入版本控制，引导脚本会严格恢复锁定的插件版本并安装通用开发工具，任何一步失败都会以非零退出码结束并说明失败原因。正常启动不会在后台检查插件或 Mason 工具；需要升级插件时执行 `:Lazy update`，需要安装或修复通用开发工具时执行 `:MasonToolsInstall`。`cmake-language-server` 不由 Mason 安装，因为其 Python 版本要求可能与系统 Python 冲突；安装方法见嵌入式开发流程。
+常用入口：
 
-## 更新和保存配置
+- `空格 f f`：查找文件
+- `空格 f g`：全文搜索
+- `空格 e`：文件树
+- `空格 f t`：浮动终端
+- `空格 g l`：仓库文件历史
+- `空格 g q`：关闭 Diffview
 
-获取远程更新：
+完整列表见 [快捷键](docs/keymaps.md)。
 
-```text
-cd <Neovim 配置仓库>
-git pull
+## 用户配置
+
+仓库不要求设备专用路径。工具能通过 `PATH` 找到时无需额外设置；否则复制 `local.example.lua` 为 `local.lua`，只填写当前设备需要覆盖的项目：
+
+```powershell
+Copy-Item local.example.lua local.lua
 ```
 
-保存本地修改：
+```bash
+cp local.example.lua local.lua
+```
+
+`local.lua` 已被 Git 忽略，不会进入提交。支持的字段和环境变量见 [配置说明](docs/configuration.md)。
+
+## 更新
 
 ```text
-cd <Neovim 配置仓库>
-git status
-git add .
-git commit -m "描述本次 Neovim 配置修改"
-git push
+cd <Neovim 配置目录>
+git pull --ff-only
 ```
+
+随后重新运行对应平台的 bootstrap 脚本。插件不会在普通启动时自动更新；需要主动升级时使用 `:Lazy update`，并提交更新后的 `lazy-lock.json`。
+
+## 文档
+
+- [配置说明](docs/configuration.md)
+- [依赖说明](docs/dependencies.md)
+- [快捷键](docs/keymaps.md)
+- [嵌入式开发](docs/embedded.md)
+- [故障排查](docs/troubleshooting.md)
+- [贡献与验证](docs/contributing.md)
+- [版本记录](CHANGELOG.md)
+
+## 卸载
+
+删除 Neovim 配置目录即可移除配置。插件、Mason 工具、parser 和运行日志位于 Neovim 的数据目录；若希望完全清理，可在 `:checkhealth nvim_config` 中确认当前配置目录和数据目录后，再单独删除对应数据目录。

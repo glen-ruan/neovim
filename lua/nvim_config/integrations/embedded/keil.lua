@@ -1,5 +1,5 @@
 local M = {}
-local platform = require("config.platform")
+local platform = require("nvim_config.core.platform")
 
 local function notify_result(result)
   local text = vim.trim(table.concat({ result.stdout or "", result.stderr or "" }, "\n"))
