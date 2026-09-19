@@ -19,6 +19,11 @@ local function has_command(name)
   end
 end
 
+-- The file buffer named on the command line is the reference buffer for the
+-- buffer-local contracts below; the sections in between switch the current
+-- buffer to scratch buffers of their own.
+local verification_buffer = vim.api.nvim_get_current_buf()
+
 vim.wait(3000, function()
   return package.loaded["lazy.core.config"] ~= nil
 end)
@@ -175,10 +180,11 @@ for _, lhs in ipairs({ "<Tab>", "<S-Tab>" }) do
 end
 has_mapping("t", "<Esc><Esc>")
 
+vim.api.nvim_set_current_buf(verification_buffer)
 vim.wait(3000, function()
-  return #vim.lsp.get_clients({ bufnr = 0 }) > 0
+  return #vim.lsp.get_clients({ bufnr = verification_buffer }) > 0
 end)
-if #vim.lsp.get_clients({ bufnr = 0 }) == 0 then
+if #vim.lsp.get_clients({ bufnr = verification_buffer }) == 0 then
   fail("no LSP client attached to the verification buffer")
 else
   has_mapping("n", "K", true)
