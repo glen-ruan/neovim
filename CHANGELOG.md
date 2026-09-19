@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Copy the URL of a GitHub repository or release view with `<C-y>`, which Octo maps for issues, pull requests, discussions, and workflow runs only.
+- Add CodeCompanion for AI chat and agent CLIs in a floating window, detecting the available agents (`opencode`, `claude`, `codex`, `copilot`) from `PATH` instead of requiring a fixed setup.
 
 ## 2.1.0 - 2026-09-19
 

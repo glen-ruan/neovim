@@ -132,6 +132,11 @@ function M.check()
   end
   executable("node", false)
   executable("gh", false)
+  -- Agent CLIs CodeCompanion detects; see docs/dependencies.md.
+  executable("opencode", false)
+  executable("claude", false)
+  executable("codex", false)
+  executable("copilot", false)
   executable("quarto", false)
   executable("clangd", false)
   executable("cmake-language-server", false)
