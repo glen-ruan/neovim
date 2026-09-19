@@ -14,12 +14,17 @@ for i = 1, 9 do
 end
 
 -- 分屏操作
+local windows = require("nvim_config.core.windows")
 map("n", "<leader><Left>", "<C-w>h", opts) -- 移动到左边窗口
 map("n", "<leader><Down>", "<C-w>j", opts) -- 移动到下边窗口
 map("n", "<leader><Up>", "<C-w>k", opts) -- 移动到上边窗口
 map("n", "<leader><Right>", "<C-w>l", opts) -- 移动到右边窗口
-map("n", "<leader>sv", "<cmd>vsplit<CR>", { desc = "垂直分屏" })
-map("n", "<leader>sh", "<cmd>split<CR>", { desc = "水平分屏" })
+map("n", "<leader>sv", function()
+  windows.split("vsplit")
+end, { desc = "垂直分屏（仅编辑窗口）" })
+map("n", "<leader>sh", function()
+  windows.split("split")
+end, { desc = "水平分屏（仅编辑窗口）" })
 map("n", "<leader>se", "<C-w>=", { desc = "平均分配窗口" })
 map("n", "<leader>sx", "<cmd>close<CR>", { desc = "关闭当前分屏" })
 

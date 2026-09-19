@@ -25,4 +25,19 @@ for _, lhs in ipairs({ " w", " q", " ft", " e" }) do
   assert(mappings[lhs], "missing startup mapping: " .. lhs)
 end
 
+local windows = require("nvim_config.core.windows")
+assert(windows.is_editor_buffer(0), "the initial buffer should be treated as an editor buffer")
+local window_count = #vim.api.nvim_list_wins()
+assert(windows.split("vsplit"), "editor buffers should allow manual splits")
+assert(#vim.api.nvim_list_wins() == window_count + 1, "the editor split was not created")
+vim.cmd.close()
+
+local special = vim.api.nvim_create_buf(false, true)
+assert(not windows.is_editor_buffer(special), "nofile buffers must not be treated as editor buffers")
+vim.api.nvim_set_current_buf(special)
+window_count = #vim.api.nvim_list_wins()
+assert(not windows.split("vsplit"), "utility buffers should reject manual splits")
+assert(#vim.api.nvim_list_wins() == window_count, "a utility-buffer split was created")
+vim.api.nvim_buf_delete(special, { force = true })
+
 print("Startup smoke check passed")
