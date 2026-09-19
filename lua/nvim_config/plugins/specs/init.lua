@@ -13,7 +13,11 @@ end
 table.sort(files)
 for _, name in ipairs(files) do
   local plugin_specs = require(module .. name)
-  vim.list_extend(specs, plugin_specs)
+  if type(plugin_specs[1]) == "string" then
+    table.insert(specs, plugin_specs)
+  else
+    vim.list_extend(specs, plugin_specs)
+  end
 end
 
 return specs

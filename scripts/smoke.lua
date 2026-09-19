@@ -13,6 +13,19 @@ end
 dofile(vim.fs.joinpath(root, "init.lua"))
 
 assert(captured and type(captured.spec) == "table" and #captured.spec > 0, "plugin specifications were not loaded")
+
+local plugin_specs = {}
+for _, spec in ipairs(captured.spec) do
+  if type(spec) == "table" and type(spec[1]) == "string" then
+    plugin_specs[spec[1]] = spec
+  end
+end
+for _, plugin in ipairs({ "folke/snacks.nvim", "stevearc/aerial.nvim", "smjonas/inc-rename.nvim" }) do
+  local spec = plugin_specs[plugin]
+  assert(spec, "missing plugin specification: " .. plugin)
+  assert(type(spec.keys) == "table" and #spec.keys > 0, "plugin keymaps were dropped: " .. plugin)
+end
+
 for _, command in ipairs({ "ConfigVersion", "ConfigChangelog", "LspAvailability", "Hv" }) do
   assert(vim.fn.exists(":" .. command) == 2, "missing startup command: " .. command)
 end

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Preserve complete single-plugin specs when aggregating plugin modules, including Snacks, Aerial, rename, completion, diagnostics, writing, and scrolling configuration.
 - Restrict the manual horizontal and vertical split mappings to normal editor buffers, preventing accidental splits from file trees and other utility windows.
 - Move runtime code into the `nvim_config` namespace with separate core, feature, integration, and plugin-spec modules.
 - Keep the root `init.lua` as a stable one-line entry point and load IAR/Keil integrations only on Windows.
