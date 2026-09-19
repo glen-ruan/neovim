@@ -86,8 +86,11 @@ for _, lhs in ipairs({
   "<leader>sS",
   "<leader>nh",
   "<leader>ghr",
+  "<leader>ghc",
   "<leader>ghi",
   "<leader>ghp",
+  "<leader>ghd",
+  "<leader>ghl",
   "<leader>ghn",
   "<leader>ghs",
   "<leader>o",
@@ -106,6 +109,49 @@ has_command("Octo")
 local octo_ok, octo_config = pcall(require, "octo.config")
 if not octo_ok or not octo_config.values or octo_config.values.picker ~= "snacks" then
   fail("Octo did not load with the Snacks picker")
+end
+
+local github = require("nvim_config.features.github")
+local repository_items = github._repository_items({
+  {
+    fullName = "neovim/neovim",
+    description = "Vim-fork focused on extensibility and usability",
+    stargazersCount = 100000,
+    language = "Vim Script",
+    visibility = "public",
+  },
+})
+if #repository_items ~= 1 or repository_items[1].repo ~= "neovim/neovim" then
+  fail("GitHub repository results were not converted for the Snacks picker")
+end
+
+local code_items = github._code_items({
+  items = {
+    {
+      path = "runtime/plugin/man.lua",
+      html_url = "https://github.com/neovim/neovim/blob/1234567890abcdef/runtime/plugin/man.lua",
+      repository = { full_name = "neovim/neovim" },
+      text_matches = { { fragment = "vim.api.nvim_create_user_command" } },
+    },
+  },
+})
+if #code_items ~= 1 or code_items[1].reference ~= "1234567890abcdef" then
+  fail("GitHub code results were not converted for the Snacks picker")
+end
+
+local normal_buffer = vim.api.nvim_create_buf(true, false)
+local octo_buffer = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_set_current_buf(normal_buffer)
+vim.api.nvim_set_current_buf(octo_buffer)
+vim.bo[octo_buffer].buftype = "acwrite"
+vim.bo[octo_buffer].filetype = "octo"
+has_mapping("n", "q", true)
+has_mapping("n", "<leader>q", true)
+if not github.close_view() or vim.api.nvim_get_current_buf() ~= normal_buffer then
+  fail("Octo safe close did not return to an editor buffer")
+end
+if vim.api.nvim_buf_is_valid(octo_buffer) then
+  fail("Octo safe close did not delete the GitHub view buffer")
 end
 
 local windows = require("nvim_config.core.windows")

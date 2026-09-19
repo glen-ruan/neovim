@@ -60,6 +60,22 @@ assert(not windows.close(), "utility buffers should reject the editor-only quit 
 assert(vim.api.nvim_get_current_buf() == special, "the editor-only quit action closed a utility buffer")
 vim.api.nvim_buf_delete(special, { force = true })
 
+local github = require("nvim_config.features.github")
+github.setup()
+local github_view = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_set_current_buf(github_view)
+vim.bo[github_view].buftype = "acwrite"
+vim.bo[github_view].filetype = "octo"
+for _, buffer in ipairs(vim.api.nvim_list_bufs()) do
+  if buffer ~= github_view and vim.api.nvim_buf_is_valid(buffer) and vim.bo[buffer].buftype == "" then
+    vim.api.nvim_buf_delete(buffer, { force = true })
+  end
+end
+assert(vim.fn.maparg("q", "n", false, true).buffer == 1, "Octo views must have a buffer-local safe close mapping")
+assert(github.close_view(), "Octo views should close safely")
+assert(windows.is_editor_buffer(), "safe GitHub view close should create a replacement editor buffer")
+assert(vim.api.nvim_buf_is_valid(0), "safe GitHub view close should keep Neovim running")
+
 local lsp_features = require("nvim_config.features.lsp")
 local original_hover = vim.lsp.buf.hover
 local original_signature_help = vim.lsp.buf.signature_help

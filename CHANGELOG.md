@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add global GitHub repository and code search through GitHub CLI and the Snacks picker, with remote code results opening as read-only Neovim buffers.
+- Make GitHub Issue, pull request, and discussion shortcuts search across GitHub instead of requiring the current working directory to be a matching repository.
+- Add safe buffer-local `q` and `<leader>q` mappings for Octo and remote GitHub buffers so closing a view cannot leave Neo-tree as the final window and exit Neovim.
+
 ## 2.0.0 - 2026-09-19
 
 - Restrict `<leader>q` to regular editor buffers so an accidental quit mapping cannot close Neo-tree or another utility window.

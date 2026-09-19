@@ -9,7 +9,7 @@
 - 文件、全文、Git、符号和历史记录搜索
 - 文件树、Buffer 栏、浮动终端和通知历史
 - Diffview 文件历史与仓库差异视图
-- 在 Neovim 内查看 GitHub 仓库、Issue、Pull Request 与代码评审
+- 在 Neovim 内搜索并查看 GitHub 仓库、代码、Issue、Pull Request 与代码评审
 - Python 调试
 - Markdown、Quarto 和 LaTeX 写作支持
 - Windows 下可选的 IAR、Keil clangd 编译数据库生成工具
@@ -63,7 +63,7 @@ git clone --branch main https://github.com/glen-ruan/neovim.git ~/.config/nvim
 - `空格 f t`：浮动终端
 - `空格 g l`：仓库文件历史
 - `空格 g q`：关闭 Diffview
-- `空格 g h r`：查看 GitHub 仓库
+- `空格 g h r`：搜索全部 GitHub 仓库
 
 完整列表见 [快捷键](docs/keymaps.md)。
 

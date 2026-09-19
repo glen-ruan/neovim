@@ -94,15 +94,20 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 
 | 操作 | 快捷键或命令 |
 |---|---|
-| 列出 GitHub 仓库 | `空格 g h r` |
-| 当前仓库的 Issues | `空格 g h i` |
-| 当前仓库的 Pull Requests | `空格 g h p` |
+| 搜索全部 GitHub 仓库 | `空格 g h r` |
+| 搜索全部 GitHub 代码 | `空格 g h c` |
+| 搜索全部 GitHub Issues | `空格 g h i` |
+| 搜索全部 GitHub Pull Requests | `空格 g h p` |
+| 搜索全部 GitHub Discussions | `空格 g h d` |
+| 列出本人、参与及组织仓库 | `空格 g h l` |
 | GitHub 通知 | `空格 g h n` |
-| 搜索 Issue、PR 与 Discussion | `空格 g h s` |
+| 通用搜索 Issue、PR 与 Discussion | `空格 g h s` |
 | 打开指定仓库 | `:Octo repo view owner/name` |
 | 打开 GitHub URL | `:Octo <GitHub URL>` |
 
-在 Octo Buffer 中按 `Enter` 可查看可用操作。Octo 侧重仓库概览、Issue、PR、Discussion 和代码评审；要编辑完整源码，仍应先克隆仓库再用 Neovim 打开。
+仓库搜索支持 GitHub 搜索限定词，例如 `language:lua stars:>1000`。代码搜索同样支持 `repo:`、`language:`、`path:` 等限定词；选择结果后会在只读 Buffer 中打开完整远程文件。
+
+在 Octo Buffer 中按 `Enter` 可查看可用操作，按 `q` 或 `空格 q` 可安全返回普通编辑 Buffer。安全退出会保留 Neo-tree；如果没有可返回的文件，则创建一个空编辑 Buffer，而不是退出 Neovim。
 
 ## 调试
 
