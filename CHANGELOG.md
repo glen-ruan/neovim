@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.0 - 2026-09-19
 
 - Add global GitHub repository and code search through GitHub CLI and the Snacks picker, with remote code results opening as read-only Neovim buffers.
 - Make GitHub Issue, pull request, and discussion shortcuts search across GitHub instead of requiring the current working directory to be a matching repository.
