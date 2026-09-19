@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Copy the URL of a GitHub repository or release view with `<C-y>`, which Octo maps for issues, pull requests, discussions, and workflow runs only.
+
 ## 2.1.0 - 2026-09-19
 
 - Add global GitHub repository and code search through GitHub CLI and the Snacks picker, with remote code results opening as read-only Neovim buffers.

@@ -202,6 +202,38 @@ if vim.fn.getreg('"') ~= "" then
   fail("GitHub copy_url copied a result that has no URL")
 end
 
+if github._view_url("github.com", "neovim/neovim", "repo") ~= "https://github.com/neovim/neovim" then
+  fail("GitHub view URL for a repository was not built correctly")
+end
+if github._view_url("github.com", "neovim/neovim", "release", "v0.11.0") ~= "https://github.com/neovim/neovim/releases/tag/v0.11.0" then
+  fail("GitHub view URL for a release was not built correctly")
+end
+if github._view_url("ghe.example.com", "neovim/neovim", "repo") ~= "https://ghe.example.com/neovim/neovim" then
+  fail("GitHub view URL did not honor the configured hostname")
+end
+if github._view_url("github.com", "neovim/neovim", "release") ~= nil then
+  fail("GitHub view URL was built for a release without a tag")
+end
+
+local octo_buffer = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_set_current_buf(octo_buffer)
+vim.bo[octo_buffer].filetype = "octo"
+local copy_mapping = vim.fn.maparg("<C-y>", "n", false, true)
+if copy_mapping.lhs == nil or copy_mapping.buffer ~= 1 then
+  fail("Octo views without a copy_url mapping did not get the buffer-local <C-y>")
+end
+vim.api.nvim_buf_delete(octo_buffer, { force = true })
+
+local octo_buffer_with_mapping = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_set_current_buf(octo_buffer_with_mapping)
+vim.keymap.set("n", "<C-y>", function() end, { buffer = octo_buffer_with_mapping, desc = "upstream copy_url" })
+vim.bo[octo_buffer_with_mapping].filetype = "octo"
+local kept_mapping = vim.fn.maparg("<C-y>", "n", false, true)
+if kept_mapping.desc ~= "upstream copy_url" then
+  fail("Octo buffers that already map <C-y> were overridden")
+end
+vim.api.nvim_buf_delete(octo_buffer_with_mapping, { force = true })
+
 local normal_buffer = vim.api.nvim_create_buf(true, false)
 local octo_buffer = vim.api.nvim_create_buf(true, false)
 vim.api.nvim_set_current_buf(normal_buffer)

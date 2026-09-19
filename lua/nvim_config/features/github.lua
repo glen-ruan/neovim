@@ -43,6 +43,34 @@ local function prompt(label, callback, default)
   end)
 end
 
+local function picker_register(action)
+  local register = action and action.reg
+  if type(register) == "string" and register ~= "" then
+    return register
+  end
+  if type(vim.v.register) == "string" and vim.v.register ~= "" then
+    return vim.v.register
+  end
+  return "+"
+end
+
+local function copy_values(values, register, label)
+  if #values == 0 then
+    notify("Nothing to copy from this view", vim.log.levels.WARN)
+    return false
+  end
+
+  -- Linewise so that several values paste as separate lines.
+  local ok, err = pcall(vim.fn.setreg, register, table.concat(values, "\n"), #values > 1 and "l" or "c")
+  if not ok then
+    notify(tostring(err), vim.log.levels.ERROR)
+    return false
+  end
+
+  notify(string.format("Copied %d %s to the %s register", #values, label, register))
+  return true
+end
+
 local function regular_buffer(buffer, current)
   return buffer ~= current
     and vim.api.nvim_buf_is_valid(buffer)
@@ -90,6 +118,68 @@ local function map_safe_close(buffer)
   end
 end
 
+--- Hostname used for Octo deep links; Octo leaves it empty for github.com.
+local function octo_hostname()
+  local ok, config = pcall(require, "octo.config")
+  local hostname = ok and config.values and config.values.github_hostname or nil
+  if type(hostname) == "string" and hostname ~= "" then
+    return hostname
+  end
+  return "github.com"
+end
+
+--- Deep link for an Octo view. Issues, pull requests, and discussions carry
+--- their own URL; repositories and releases have to be built from their parts.
+local function view_url(hostname, repository, kind, tag)
+  if kind == "repo" then
+    return string.format("https://%s/%s", hostname, repository)
+  end
+  if kind == "release" and type(tag) == "string" and tag ~= "" then
+    return string.format("https://%s/%s/releases/tag/%s", hostname, repository, tag)
+  end
+  return nil
+end
+
+local function octo_url()
+  local ok, utils = pcall(require, "octo.utils")
+  if not ok then
+    return nil
+  end
+
+  local octo_buffer = utils.get_current_buffer()
+  if not octo_buffer or type(octo_buffer.repo) ~= "string" or octo_buffer.repo == "" then
+    return nil
+  end
+
+  local hostname = octo_hostname()
+  if octo_buffer:isRepo() then
+    return view_url(hostname, octo_buffer.repo, "repo")
+  end
+  if octo_buffer:isRelease() then
+    local release = octo_buffer:release()
+    return view_url(hostname, octo_buffer.repo, "release", release and release.tagName)
+  end
+  return nil
+end
+
+--- Octo maps `copy_url` for issue, pull request, discussion, and workflow run
+--- buffers only, so repository and release views have no way to copy their URL.
+--- Add the missing mapping without overriding Octo's own.
+local function map_copy_url(buffer)
+  if vim.fn.maparg("<C-y>", "n", false, true).lhs ~= nil then
+    return
+  end
+
+  vim.keymap.set("n", "<C-y>", function()
+    local url = octo_url()
+    if not url then
+      notify("No URL is available for this view", vim.log.levels.WARN)
+      return
+    end
+    copy_values({ url }, picker_register(nil), "URL")
+  end, { buffer = buffer, silent = true, desc = "Copy the URL to the system clipboard" })
+end
+
 function M.setup()
   local group = vim.api.nvim_create_augroup("NvimConfigGitHubViews", { clear = true })
   vim.api.nvim_create_autocmd("FileType", {
@@ -97,6 +187,7 @@ function M.setup()
     pattern = "octo",
     callback = function(event)
       map_safe_close(event.buf)
+      map_copy_url(event.buf)
     end,
   })
 end
@@ -160,34 +251,6 @@ local function picker_items(picker, item)
     end
   end
   return item and { item } or {}
-end
-
-local function picker_register(action)
-  local register = action and action.reg
-  if type(register) == "string" and register ~= "" then
-    return register
-  end
-  if type(vim.v.register) == "string" and vim.v.register ~= "" then
-    return vim.v.register
-  end
-  return "+"
-end
-
-local function copy_values(values, register, label)
-  if #values == 0 then
-    notify("Nothing to copy from this view", vim.log.levels.WARN)
-    return false
-  end
-
-  -- Linewise so that several values paste as separate lines.
-  local ok, err = pcall(vim.fn.setreg, register, table.concat(values, "\n"), #values > 1 and "l" or "c")
-  if not ok then
-    notify(tostring(err), vim.log.levels.ERROR)
-    return false
-  end
-
-  notify(string.format("Copied %d %s to the %s register", #values, label, register))
-  return true
 end
 
 local function copy_url(picker, item, action)
@@ -428,5 +491,6 @@ M._code_items = code_items
 M._item_urls = item_urls
 M._view_actions = view_actions
 M._view_keys = view_keys
+M._view_url = view_url
 
 return M

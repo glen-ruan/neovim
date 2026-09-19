@@ -115,6 +115,15 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 
 未选中任何结果时按 `Ctrl-y` / `Ctrl-e` 复制光标所在那一项；`Ctrl-a` 可全选，选中多项时按行复制。注意 `Ctrl-a` 之后 picker 会刷新列表，紧接着的第一次按键会被吞掉一次，再按一次即可（`Tab` / `Shift-Tab` 在本配置里是上下移动，不参与多选）。
 
+进入 Octo 视图之后（`Ctrl-y` 复制 URL、`Ctrl-b` 用浏览器打开）：
+
+| 视图 | 复制 URL | 浏览器打开 |
+|---|---|---|
+| 仓库、发布 | `Ctrl-y`（本配置补齐） | `Ctrl-b` |
+| Issue、Pull Request、Discussion、CI 运行 | `Ctrl-y`（Octo 自带） | `Ctrl-b` |
+
+Octo 官方只为 Issue、PR、Discussion 和 CI 运行提供了复制 URL 的映射，仓库与发布视图只有 `<C-b>`；本配置在后者上补一个 `<C-y>`，URL 按 `https://<hostname>/<owner>/<repo>`（发布再加 `/releases/tag/<tag>`）生成，不覆盖 Octo 自己的映射。
+
 仓库搜索支持 GitHub 搜索限定词，例如 `language:lua stars:>1000`。代码搜索同样支持 `repo:`、`language:`、`path:` 等限定词；选择结果后会在只读 Buffer 中打开完整远程文件。
 
 在 Octo Buffer 中按 `Enter` 可查看可用操作，按 `q` 或 `空格 q` 可安全返回普通编辑 Buffer。安全退出会保留 Neo-tree；如果没有可返回的文件，则创建一个空编辑 Buffer，而不是退出 Neovim。
