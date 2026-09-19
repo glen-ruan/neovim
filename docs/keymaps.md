@@ -75,6 +75,8 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 
 运行 `:LspAvailability` 可查看每个语言服务器是否可用。
 
+`K` 和插入模式 `Ctrl-s` 打开的提示都是不可聚焦的临时浮窗；移动光标后自动关闭，不使用 `q` 退出。
+
 ## Git
 
 | 操作 | 快捷键 |
@@ -87,6 +89,8 @@ Leader 键为 `Space`。本文中的“空格”均表示 Leader。
 | 仓库文件历史 | `空格 g l` |
 
 ## 调试
+
+以下快捷键和 `:DebugPython` 在首次打开 Python Buffer、加载 DAP 后可用。
 
 | 操作 | 快捷键 |
 |---|---|

@@ -53,4 +53,25 @@ assert(not windows.split("vsplit"), "utility buffers should reject manual splits
 assert(#vim.api.nvim_list_wins() == window_count, "a utility-buffer split was created")
 vim.api.nvim_buf_delete(special, { force = true })
 
+local lsp_features = require("nvim_config.features.lsp")
+local original_hover = vim.lsp.buf.hover
+local original_signature_help = vim.lsp.buf.signature_help
+local hover_options
+local signature_options
+vim.lsp.buf.hover = function(options)
+  hover_options = options
+end
+vim.lsp.buf.signature_help = function(options)
+  signature_options = options
+end
+lsp_features.hover()
+lsp_features.signature_help()
+vim.lsp.buf.hover = original_hover
+vim.lsp.buf.signature_help = original_signature_help
+assert(hover_options and hover_options.focusable == false, "hover must remain a passive floating window")
+assert(
+  signature_options and signature_options.focusable == false,
+  "signature help must remain a passive floating window"
+)
+
 print("Startup smoke check passed")

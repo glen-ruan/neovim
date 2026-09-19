@@ -11,6 +11,7 @@ return {
     config = function()
       local capabilities = require("blink.cmp").get_lsp_capabilities()
       local platform = require("nvim_config.core.platform")
+      local lsp_features = require("nvim_config.features.lsp")
 
       -- 只强调当前参数文字，避免配色方案给签名窗口铺满背景色。
       vim.api.nvim_set_hl(0, "LspSignatureActiveParameter", { bold = true, underline = true })
@@ -18,28 +19,14 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspKeymaps", { clear = true }),
         callback = function(args)
-          vim.keymap.set("n", "K", function()
-            vim.lsp.buf.hover({
-              border = "rounded",
-              max_width = 100,
-              max_height = 24,
-            })
-          end, { buffer = args.buf, desc = "LSP：查看符号说明" })
+          vim.keymap.set("n", "K", lsp_features.hover, { buffer = args.buf, desc = "LSP：查看符号说明" })
 
           -- 原生 gra/grn/gri/grt 已可用，这里再给一个显式的代码操作入口。
           vim.keymap.set({ "n", "v" }, "<leader>ca", function()
             vim.lsp.buf.code_action()
           end, { buffer = args.buf, desc = "LSP：代码操作" })
 
-          local function show_signature_help()
-            vim.lsp.buf.signature_help({
-              border = "rounded",
-              max_width = 100,
-              max_height = 12,
-            })
-          end
-
-          vim.keymap.set("i", "<C-s>", show_signature_help, {
+          vim.keymap.set("i", "<C-s>", lsp_features.signature_help, {
             buffer = args.buf,
             desc = "LSP：查看函数签名（原生快捷键）",
           })

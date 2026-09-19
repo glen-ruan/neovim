@@ -24,6 +24,7 @@ local required_files = {
   "lua/nvim_config/init.lua",
   "lua/nvim_config/dependencies.lua",
   "lua/nvim_config/health.lua",
+  "scripts/verify-runtime.lua",
   "docs/configuration.md",
   "docs/dependencies.md",
   "docs/keymaps.md",

@@ -1,5 +1,23 @@
 local M = {}
 
+function M.hover()
+  vim.lsp.buf.hover({
+    border = "rounded",
+    max_width = 100,
+    max_height = 24,
+    focusable = false,
+  })
+end
+
+function M.signature_help()
+  vim.lsp.buf.signature_help({
+    border = "rounded",
+    max_width = 100,
+    max_height = 12,
+    focusable = false,
+  })
+end
+
 function M.show_availability()
   local servers = require("nvim_config.dependencies").lsp
   local lines = {}

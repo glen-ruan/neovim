@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a real-plugin runtime contract check covering documented commands and core, search, Git, DAP, LSP, formatting, Quarto, and terminal keymaps.
+- Keep hover and signature help as passive, non-focusable floating windows that close on cursor movement, without a `q`-to-close interaction.
 - Restore `:LspInfo` on Neovim 0.12 as a compatibility alias for the native `:checkhealth vim.lsp` report.
 - Preserve complete single-plugin specs when aggregating plugin modules, including Snacks, Aerial, rename, completion, diagnostics, writing, and scrolling configuration.
 - Restrict the manual horizontal and vertical split mappings to normal editor buffers, preventing accidental splits from file trees and other utility windows.

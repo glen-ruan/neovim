@@ -16,6 +16,14 @@ Lua 语法检查：
 nvim --headless -u NONE -i NONE -l scripts/check.lua
 ```
 
+安装插件后，使用一个能够连接 LSP 的 Lua 文件验证文档中的命令和快捷键：
+
+```text
+nvim --headless -i NONE -u init.lua init.lua -l scripts/verify-runtime.lua
+```
+
+该检查覆盖核心窗口操作、搜索、Git、DAP、LSP、格式化、Quarto、终端以及用户命令。修改快捷键或用户文档后必须运行。
+
 运行配置检查：
 
 ```vim
